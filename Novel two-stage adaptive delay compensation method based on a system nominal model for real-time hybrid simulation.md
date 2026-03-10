@@ -1,0 +1,630 @@
+
+
+![Elsevier logo featuring a tree and the word ELSEVIER](935eed7aa61f7777f62cfc032e11bee9_img.jpg)
+
+Elsevier logo featuring a tree and the word ELSEVIER
+
+![Engineering Structures journal cover image showing a bridge structure](390120de4fe440c42fea8154fcaad334_img.jpg)
+
+Engineering Structures journal cover image showing a bridge structure
+
+![Check for updates button](0538daaa5583c23e17db3a12f2281a55_img.jpg)
+
+Check for updates button
+
+# Novel two-stage adaptive delay compensation method based on a system nominal model for real-time hybrid simulation
+
+Zhen Wang<sup>a,b,\*</sup> ![ORCID icon](17413706fd4997a1a4bdf85c6864eee1_img.jpg), Jiajun Xiao<sup>a,b</sup>, Bin Wu<sup>a,b</sup>, Cheng Chen<sup>c</sup>, Oreste S. Bursi<sup>d</sup>, Xuejun Jia<sup>e</sup>
+
+<sup>a</sup> School of Civil Engineering and Architecture, Wuhan University of Technology, Wuhan 430070, China
+
+<sup>b</sup> Hainan Institute of Wuhan University of Technology, Sanya 572000, China
+
+<sup>c</sup> School of Engineering, San Francisco State University, San Francisco, CA 94132, USA
+
+<sup>d</sup> Department of Civil, Environmental and Mechanical Engineering, University of Trento, Trento 38123, Italy
+
+<sup>e</sup> College of Transportation Engineering, Nanjing Technology University, Nanjing 211899, China
+
+## ARTICLE INFO
+
+### Keywords:
+
+Real-time hybrid simulation  
+Delay compensation  
+Robustness  
+High-speed train  
+Hunting damper
+
+## ABSTRACT
+
+In real-time hybrid simulation (RTHS), delay compensation is one of the crucial issues that affect the accuracy and reliability of test data. A novel two-stage adaptive delay compensation method is presented in this study to enhance compensation accuracy and robustness. This method employs a Kalman filter-based adaptive nominal model compensation (KF-ANMC) in the first stage to enhance the compensation robustness against system uncertainties. Inverse control compensation serves as the second stage compensation to eliminate the system delay and to improve the accuracy of RTHS. Through computational simulations and real tests of RTHS for high-speed trains, the effectiveness and robustness of the proposed method are validated, and the influence of relevant parameters on its performance is thoroughly analyzed. Results indicate that the proposed method exhibits great robustness against system uncertainties and superior delay compensation performance. Moreover, this study shows that the proposed method is endowed with reduced dependence on the orders of KF-ANMC and nominal system model, and parameter initialization.
+
+## 1. Introduction
+
+The increase in train speeds and the aging of railway infrastructure has led to a growing issue of hunting motion in trains, which might even result in hunting instability. To address this, the installation of hunting dampers has become crucial in suppressing the hunting motion and enhancing the critical speed of hunting instability [1]. It is therefore imperative to study the dynamic behavior of hunting dampers during train operation and their complex interactions with the train. Current research methods include pure computational simulation [2] and full-scale vehicle testing [3]. However, pure computational simulation has limited accuracy in modeling strongly nonlinear components such as hunting dampers, making it challenging to accurately replicate their dynamic characteristics. On the other hand, full-scale vehicle testing is costly and time-consuming. In addition to these two methods, real-time hybrid simulations (RTHS) [4] provide an alternative for physically testing the emulated dynamic systems.
+
+RTHS has been widely accepted as a highly efficient and cost-effective method for assessing the dynamic performance of structures
+
+in earthquake engineering. In RTHS, the structure under investigation is typically divided into numerical and physical substructures, with the latter representing the strongly nonlinear or critical components. Additionally, a servo-loading system is used to apply desired displacement onto the specimen in a real-time manner, establishing boundary conditions between the two parts for the force equilibrium and deformation compatibility. By employing substructuring techniques, large- and full-scale physical specimens can be utilized in loading tests, thereby significantly enhancing the reliability of test data and reducing experimental costs. Due to its exceptional advantages, RTHS has been extensively researched and applied in civil engineering, high-speed trains, and marine engineering fields [5–10].
+
+Currently, in the field of high-speed trains, many researchers use the RTHS method, also known as Hardware-in-the-Loop Simulation (HILS), to test the vibration reduction effect of dampers in train suspension systems [11–14], evaluate the dynamic performance of pantograph systems [15,16], and assess the dynamic performance of three-car marshaled trains [17]. Among them, reference [11] only analyzed the impact of time delays generated by loading devices on the semi-active
+
+\* Corresponding author at: School of Civil Engineering and Architecture, Wuhan University of Technology, Wuhan 430070, China.
+
+E-mail address: [wang\\_zhen@whut.edu.cn](mailto:wang_zhen@whut.edu.cn) (Z. Wang).
+
+![Fig. 1. The NTADC scheme architecture. The diagram shows two parallel compensation paths. The 'IC method' path (green dashed box) takes input d, passes it through a delay block G_0^{-1}, and then through a block G_1 to produce d_1. The 'KF-ANMC method' path (orange dashed box) takes input d, passes it through a Kalman filter to produce a delayed estimate \hat{w}, then through a block G_0 to produce d_0. This d_0 is then passed through a 'Nominal model' block to produce d_c. Both d_1 and d_c are fed into a 'Loading system and specimen' block, which produces the measured output d_m. A feedback loop from d_m to the Kalman filter is also shown.](aa9e46d6f962be5cebcbb5c654c9b13e_img.jpg)
+
+Fig. 1. The NTADC scheme architecture. The diagram shows two parallel compensation paths. The 'IC method' path (green dashed box) takes input d, passes it through a delay block G\_0^{-1}, and then through a block G\_1 to produce d\_1. The 'KF-ANMC method' path (orange dashed box) takes input d, passes it through a Kalman filter to produce a delayed estimate \hat{w}, then through a block G\_0 to produce d\_0. This d\_0 is then passed through a 'Nominal model' block to produce d\_c. Both d\_1 and d\_c are fed into a 'Loading system and specimen' block, which produces the measured output d\_m. A feedback loop from d\_m to the Kalman filter is also shown.
+
+Fig. 1. The NTADC scheme architecture.
+
+![Fig. 2. Principle of adaptive nominal model compensation. The diagram shows a 'Nominal model compensator' (orange dashed box) containing a 'Nominal model' block G_0. The input d_1 is fed into G_0 to produce d_0. This d_0 is then fed into a 'Loading system and specimen' block G. The output of G is d_m. A feedback loop from d_m to the input of G_0 is shown. The output of G_0 is also fed into a 'Control objective' block, which produces the error e = 0.](164d1b48231be457522b31965610ea3b_img.jpg)
+
+Fig. 2. Principle of adaptive nominal model compensation. The diagram shows a 'Nominal model compensator' (orange dashed box) containing a 'Nominal model' block G\_0. The input d\_1 is fed into G\_0 to produce d\_0. This d\_0 is then fed into a 'Loading system and specimen' block G. The output of G is d\_m. A feedback loop from d\_m to the input of G\_0 is shown. The output of G\_0 is also fed into a 'Control objective' block, which produces the error e = 0.
+
+Fig. 2. Principle of adaptive nominal model compensation.
+
+suspension system of trains, but did not use a time delay compensation method to compensate for the time delay. Reference [14] conducted RTHS of hunting dampers, revealing that time delays reduce the hunting stability of the train, seriously affecting the accuracy of the test results. Similarly, time delay also affects test accuracy and may even induce instability in the RTHS of engineering structures [18–20]. Therefore, it is necessary to carry out time delay compensation to obtain reliable test results.
+
+Extensive research has been conducted to tackle this issue. For instance, Horiuchi et al. [18] proposed a polynomial extrapolation (PE) method to compensate system time delays. However, these PE methods are only suitable for systems with constant time delays. Carrion et al. [21] proposed an improved inverse control method, involving inverting the nominal model of the loading system and cascading it with a low-pass filter to obtain a stable feedforward controller. Similarly, Zhou et al. [22] divided the loading system into a nominal model and an error model. Nonetheless, the accuracy of these model-based delay compensation strategies often relies on the accuracy of the identified model.
+
+Moreover, it has been noted that the time delay often varies during RTHS [23]. As a result, adaptive techniques have witnessed significant advancements. For example, Chae et al. [24] proposed an adaptive time series (ATS) compensation strategy, which showed promising performance. To mitigate the impact of noise and test errors, Wallace et al. [25] introduced a least squares polynomial extrapolation method that can utilize more data points to predict the commands. Wang et al. [26] introduced an adaptive delay compensation method based on a discrete system model, which has been further refined by other researchers [27, 28]. However, the efficacy of the single-stage adaptive delay compensation strategies is greatly influenced by the initial parameter values and the model order, posing challenges for robust performance. To address these, Wang et al. [29] suggested a two-stage adaptive delay compensation method, which was later enhanced by Wang et al. [30]. This method integrates the PE method and the adaptive method to compensate for the primary and the residual time delay of the system, respectively. The compensation performance of this strategy however is constrained due to the high-frequency amplification effect and the limited prediction accuracy of the PE method.
+
+To achieve highly effective delay compensation, control strategies rooted in modern control theory have attracted significant interest. Ning et al. [31] employed a robust  $H_\infty$  control strategy based on mixed sensitivity to address time delays in RTHS, showcasing its efficacy through computational simulation and physical experiments. Li et al. [32] integrates a bounded-gain forgetting least-squares estimator and a sliding mode controller into adaptive sliding mode control. Zhou et al.
+
+[33] merged the linear quadratic Gaussian control strategy with the ATS method, which shows a comprehensive wide-band delay compensation technique through RTHS experiments of a train-bridge coupling system. Zeng et al. [34] combined the model reference predictive control with a polynomial-based forward reference prediction, demonstrating remarkable robustness against uncertainties in the loading system. More recently, Ning et al. [35] proposed a model-based adaptive feed forward-feedback time delay compensation strategy by dissecting the loading system into a nominal model and an error model.
+
+Despite these advances in compensation strategies, the controller design in RTHS remains a challenge for engineering researchers. It is further notable that delay compensators for variable delay systems encounter obstacles like inadequate compensation accuracy, limited robustness, and complex compensator designs. In response to these, this study introduces a novel two-stage adaptive delay compensation method to streamline compensator design, boost compensation accuracy and robustness against system uncertainties.
+
+This paper is structured as follows: Section 2 elaborates on the formulation of the proposed two-stage adaptive delay compensation method. Sections 3 and 4 showcase the effectiveness and robustness of the method through computational simulation and RTHS tests of high-speed trains. Additionally, a comprehensive analysis is presented for the influence of key parameters on the method performance. Finally, Section 5 summarizes the key findings of this study.
+
+## 2. Formulation of novel two-stage adaptive delay compensation method
+
+The novel two-stage adaptive delay compensation (NTADC) method proposed in this study is based on a system nominal model. As illustrated in Fig. 1, NTADC comprises two specific stages: a Kalman filter-based adaptive nominal model compensation (KF-ANMC) and an inverse control (IC) compensation.
+
+Inverse control is widely used for delay compensation in RTHS. Its performance, however, heavily depends on the accuracy of its inverse model. Discrepancies between the model and the actual system often occur due to nonlinearity, parameter uncertainty, and unmodeled dynamic characteristics. These factors pose significant challenges for the IC method in achieving high performance with excellent accuracy, robustness, and applicability.
+
+Adaptive compensation methods often demonstrate superior performance due to their ability to accommodate parameter variations in the system. Moreover, two-stage adaptive methods tend to be more effective because they focus on identifying only parameter variations online. However, adaptive methods can sometimes fall short in terms of robustness and can be complex to implement. For example, the adaptive compensation method [26], when implemented not properly, might struggle with robustness when discrete system models with multiple parameters are used.
+
+The underlying concept behind the proposed compensator is to design an adaptive compensator to mitigate the effects of parameter variation and uncertainty on the traditional IC in the second stage. Despite the two-stage strategy, it differs significantly from other two-stage methods. In those methods, the first stage typically compensates for the nominal delay, followed by adaptive compensation for the uncertainty delay. Nevertheless, KF-ANMC is designed to effectively reduce uncertainties in the loading-specimen system, while IC is employed for eliminating system delay, thereby enhancing the accuracy of RTHS. The detailed implementation of the proposed method is described as follows.
+
+### 2.1. Nominal model compensator
+
+Typically, obtaining an accurate model of the loading-specimen system is challenging due to system uncertainties, especially when the nonlinear behavior of physical specimen is unknown. Often a linearized
+
+![Fig. 3. KF-ANMC principle. This block diagram illustrates the KF-ANMC principle. It shows a feedback loop where the input d1 is fed into a 'Kalman filter' block, which outputs an estimated parameter vector w-hat. This vector is used to calculate a feedforward command d_c,i = sum_{i-k} d_{i-k} * w-hat_i. This command d_c is fed into a 'Loading system' block, which is also influenced by a 'Nominal model' block (G0). The output of the loading system is the nominal output d0. The nominal output d0 and the measured output dm are compared at a summing junction to produce the error signal e. The goal is to make e = 0.](7055f51feb10ea4ea48b27c36f085286_img.jpg)
+
+Fig. 3. KF-ANMC principle. This block diagram illustrates the KF-ANMC principle. It shows a feedback loop where the input d1 is fed into a 'Kalman filter' block, which outputs an estimated parameter vector w-hat. This vector is used to calculate a feedforward command d\_c,i = sum\_{i-k} d\_{i-k} \* w-hat\_i. This command d\_c is fed into a 'Loading system' block, which is also influenced by a 'Nominal model' block (G0). The output of the loading system is the nominal output d0. The nominal output d0 and the measured output dm are compared at a summing junction to produce the error signal e. The goal is to make e = 0.
+
+Fig. 3. KF-ANMC principle.
+
+![Fig. 4. Inverse control principle. This block diagram illustrates the inverse control principle. It shows a feedback loop where the input d is fed into an 'Inverse controller' block (G0 inverse). The output of this block is the nominal command d0. This command d0 is fed into a 'Loading system' block, which is also influenced by a 'Nominal model' block (G0). The output of the loading system is the nominal output d0. The nominal output d0 and the measured output dm are compared at a summing junction to produce the error signal e. The goal is to make e = 0.](163688ca8da9787f5d48edd68d8cc75b_img.jpg)
+
+Fig. 4. Inverse control principle. This block diagram illustrates the inverse control principle. It shows a feedback loop where the input d is fed into an 'Inverse controller' block (G0 inverse). The output of this block is the nominal command d0. This command d0 is fed into a 'Loading system' block, which is also influenced by a 'Nominal model' block (G0). The output of the loading system is the nominal output d0. The nominal output d0 and the measured output dm are compared at a summing junction to produce the error signal e. The goal is to make e = 0.
+
+Fig. 4. Inverse control principle.
+
+nominal model can be obtained from the offline system identification. These uncertainties significantly affect the robustness and accuracy of compensators derived from these nominal models. To address this, a Kalman filter-based adaptive nominal model compensator is designed in this study using the nominal model. The goal is to ensure that the system output matches the model output, thereby minimizing the impact of system uncertainties.
+
+As shown in Fig. 2,  $G$  denotes the actual transfer function of the loading system combined with the specimen;  $G_0$  represents its nominal model; and  $G_1$  is a feedforward controller. Additionally,  $d_1$ ,  $d_c$ ,  $d_0$ ,  $d_m$  and  $d_m$  correspond to the input, command, nominal output, measured output, and ideal output, respectively. Clearly, for
+
+$$G_1 = \frac{G_0}{G} \quad (1)$$
+
+the transfer function from the input to the measured output would match  $G_0$ , indicating that the error between  $d_m$  and  $d_0$  approaches zero. However, due to uncertainties, accurate  $G$  is not usually available, thereby generating deviations between  $d_0$  and  $d_m$ . To eliminate these deviations, an updated controller  $G_1$  described below is implemented.
+
+The relationships between  $d_c$  and  $d_1$ , and between  $d_c$  and  $d_m$ , can be expressed as
+
+$$d_m = d_c \cdot G \quad (2)$$
+
+$$d_0 = d_c \cdot G_0 \quad (3)$$
+
+Then by inserting Eqs. (1) and (2) into Eq. (3), one can obtain
+
+$$d_0 = d_m \cdot \frac{G_0}{G} = d_m G_1 \quad (4)$$
+
+This means that the transfer function from  $d_m$  to  $d_0$  is actually the compensator  $G_1$ , i.e.,
+
+$$G_1 = \frac{d_0}{d_m} \quad (5)$$
+
+Reference [39] derived the mechanism model of the actuator system with displacement control, resulting in an all-pole transfer function. Moreover, it is important to note that compensator transfer functions with poles introduce stability concerns and increase the complexity of compensator design. Therefore, in practical applications, the compensator  $G_1$  can be formulated using an all-zero difference equation, with its discrete transfer function expressed as follows:
+
+$$G_1(z) = \frac{d_0(z)}{d_m(z)} = \sum_{k=0}^{N} w_k \cdot z^{-k} \quad (6)$$
+
+where  $w$  represents the true value of the model parameters;  $z$  is the delay operator; and  $N$  is the compensator order. The model parameters  $w$  can be estimated online by utilizing the nominal and the actual measured displacements, namely  $d_0$  and  $d_m$ . Therefore, the compensated command can be given by
+
+$$d_{c,i} = \sum_{k=0}^{N} d_{1,i-k} \hat{w}_k \quad (7)$$
+
+where  $\hat{w}$  is the estimated model parameters;  $\Delta t$  indicates the time interval between adjacent displacement data points. Clearly, if  $\hat{w}$  is sufficiently close to the true parameter  $w$ , the control objective of this compensation can be successfully achieved.
+
+### 2.2. Kalman filter-based adaptive nominal model compensator
+
+Generally, the compensator can be identified offline prior to RTHS. However, due to uncertainties, online identification and implementation can help achieve more satisfactory compensation performance. In this study, the Kalman filter (KF) is employed for online identification of compensator parameters, as shown in Fig. 3.
+
+The KF dynamically updates parameter estimates through a recursive process, effectively minimizing the mean square error (MSE) of the identification results. The state equation and observation equation are as follows:
+
+$$W_i = W_{i-1} + h_{i-1} \quad (8)$$
+
+$$d_{0,i} = X_i^T W_{i-1} + v_{i-1} \quad (9)$$
+
+where  $W$  and  $X$  are the model parameter vector and the measured displacement vector, respectively;  $d_{0,i}$  is the nominal measured displacement;  $v$  and  $h$  represent the measured noise and process noise, respectively.
+
+The recursive calculation of parameters in the adaptive compensator are formulated as
+
+$$P_{i/i-1} = P_{i-1} + Q \quad (10)$$
+
+$$K_i = P_{i/i-1} X_i (X_i^T P_{i/i-1} X_i + R) \quad (11)$$
+
+$$\hat{W}_i = \hat{W}_{i-1} + K_i (d_{0,i} - X_i^T \hat{W}_{i-1}) \quad (12)$$
+
+$$P_i = (I - K_i X_i^T) P_{i/i-1} \quad (13)$$
+
+where,  $P$  and  $K$  represent the covariance matrix and Kalman gain, respectively;  $Q$  and  $R$  are the system noise covariance matrix and measured noise covariance matrix, respectively;  $\hat{W}$  is the estimated model parameter vector, and  $I$  is the identity matrix with the same order as the dimension of the parameter vector.
+
+### 2.3. Second stage: inverse control
+
+When the nominal model precisely replicates the dynamics of the loading-specimen system, i.e.,  $G = G_0$ , the inverse of the nominal model can then be adopted as the feed forward controller. This leads to the Inverse Control scheme as shown in Fig. 4, where  $G_0^{-1}$  denotes the inverse of the nominal model and  $d$  is the desired displacement. This scheme aligns the system output displacement ( $d_m$ ) with the desired displacement ( $d$ ), effectively achieving delay compensation.
+
+![Fig. 5. The 17-DOF lateral dynamic model of high-speed trains. The diagram shows a multi-car train model with various degrees of freedom. It includes longitudinal displacement (x_c, z_c), lateral displacement (y_c), and rotation (theta_c). The model is divided into sections with dimensions 2l, 2l_1, 2l_2, 2b, 2b_1, 2b_2, 2b_3, h_1, h_2, h_3, h_4, h_5, and h_6. It also shows forces and displacements at the bogie level (y_{w1}, y_{w2}, y_{w3}, y_{w4}, phi_{w1}, phi_{w2}, phi_{w3}, phi_{w4}) and car body level (y_{i1}, y_{i2}, y_{i3}, phi_{i1}, phi_{i2}, phi_{i3}). Spring and damper parameters are labeled as K_{1x/2}, K_{2x/2}, K_{3x/2}, K_{1y/2}, K_{2y/2}, K_{3y/2}, C_{1x/2}, C_{2x/2}, C_{3x/2}, C_{1y/2}, C_{2y/2}, and C_{3y/2}.](9e6062272bbe3ddbb7c0606721d64cf0_img.jpg)
+
+Fig. 5. The 17-DOF lateral dynamic model of high-speed trains. The diagram shows a multi-car train model with various degrees of freedom. It includes longitudinal displacement (x\_c, z\_c), lateral displacement (y\_c), and rotation (theta\_c). The model is divided into sections with dimensions 2l, 2l\_1, 2l\_2, 2b, 2b\_1, 2b\_2, 2b\_3, h\_1, h\_2, h\_3, h\_4, h\_5, and h\_6. It also shows forces and displacements at the bogie level (y\_{w1}, y\_{w2}, y\_{w3}, y\_{w4}, phi\_{w1}, phi\_{w2}, phi\_{w3}, phi\_{w4}) and car body level (y\_{i1}, y\_{i2}, y\_{i3}, phi\_{i1}, phi\_{i2}, phi\_{i3}). Spring and damper parameters are labeled as K\_{1x/2}, K\_{2x/2}, K\_{3x/2}, K\_{1y/2}, K\_{2y/2}, K\_{3y/2}, C\_{1x/2}, C\_{2x/2}, C\_{3x/2}, C\_{1y/2}, C\_{2y/2}, and C\_{3y/2}.
+
+Fig. 5. The 17-DOF lateral dynamic model of high-speed trains [36,14].
+
+![Fig. 6. Virtual RTHS platform for high-speed train. The diagram shows a feedback control loop. The 'Numerical substructure for high-speed train' provides 'Measured displacement and measured force' to the 'Loading system'. The 'Loading system' consists of a 'Damper' and a 'Servo-controller' which outputs a 'Command displacement' to a 'Delay compensator'. The 'Delay compensator' outputs a 'Desired displacement' back to the numerical substructure. The 'Loading system' also outputs a 'Command displacement' directly to the numerical substructure.](d62e2e2281009c16f4ee61660e716cd9_img.jpg)
+
+Fig. 6. Virtual RTHS platform for high-speed train. The diagram shows a feedback control loop. The 'Numerical substructure for high-speed train' provides 'Measured displacement and measured force' to the 'Loading system'. The 'Loading system' consists of a 'Damper' and a 'Servo-controller' which outputs a 'Command displacement' to a 'Delay compensator'. The 'Delay compensator' outputs a 'Desired displacement' back to the numerical substructure. The 'Loading system' also outputs a 'Command displacement' directly to the numerical substructure.
+
+Fig. 6. Virtual RTHS platform for high-speed train.
+
+![Fig. 7. Numerical model of the loading-specimen system. The diagram shows a control loop: displacement d_c is compared with feedback d_m, then passed through a 'Servo-controller' (G_p + G_d s), a 'Gain' K, and a 'Servo-valve' (alpha_1 beta_1 / (s^2 + beta_1 s + beta_2)). The output is compared with feedback f_m, then passed through an 'Actuator' (1 / (s + alpha_3)), a 'Specimen' (C_{2x}), and a 'Damper' (1 / s) to produce the final displacement d_m.](12a6537c92844d5b393104c02e8dfc2f_img.jpg)
+
+Fig. 7. Numerical model of the loading-specimen system. The diagram shows a control loop: displacement d\_c is compared with feedback d\_m, then passed through a 'Servo-controller' (G\_p + G\_d s), a 'Gain' K, and a 'Servo-valve' (alpha\_1 beta\_1 / (s^2 + beta\_1 s + beta\_2)). The output is compared with feedback f\_m, then passed through an 'Actuator' (1 / (s + alpha\_3)), a 'Specimen' (C\_{2x}), and a 'Damper' (1 / s) to produce the final displacement d\_m.
+
+Fig. 7. Numerical model of the loading-specimen system.
+
+## 3. Virtual RTHS
+
+In this section, a virtual RTHS platform for high-speed trains is established to computationally evaluate the compensation of both the NTADC and IC methods. Furthermore, the influence of relevant parameters on the performance of the NTADC method is investigated. Compared with RTHS for civil engineering structures, RTHS for high-speed trains has distinct characteristics, such as higher specimen
+
+Table 1
+
+Parameters of the loading-specimen system model.
+
+| Parameters         | Nominal value           | Standard deviation | Unit   |
+|--------------------|-------------------------|--------------------|--------|
+| $\alpha_1 \beta_0$ | $2.1283 \times 10^{13}$ | /                  | m-Pa/s |
+| $\alpha_3$         | 3.3                     | 1.3                | 1/s    |
+| $\beta_1$          | 425                     | 3.3                | /      |
+| $B_2$              | $9.9976 \times 10^4$    | $3.3 \times 10^3$  | 1/s    |
+| $K$                | 1.0261                  | /                  | /      |
+| $G_p$              | 0.03                    | /                  | /      |
+| $G_d$              | 0.05                    | /                  | /      |
+| $C_{2x}$           | $2.5 \times 10^5$       | /                  | N-s/m  |
+
+excitation frequencies, error-sensitive and potentially unstable dynamic systems, and higher real-time computing requirements for simulation devices [38]. With these insights in mind, methods that perform well in high-speed train RTHS are often expected to exhibit superior
+
+**Table 2**  
+Evaluation metrics of different compensation methods.
+
+| Case No.                 | Method | Type    | $J_1$<br>(ms) | $J_2$<br>(%) | $J_3$<br>(%) | $J_4$<br>(%) | $J_5$<br>(%) |
+|--------------------------|--------|---------|---------------|--------------|--------------|--------------|--------------|
+| Case 1:<br>Without Noise | IC     | Nominal | 0.20          | 0.44         | 0.79         | 0.39         | 0.51         |
+|                          |        | Mean    | 0.11          | 2.77         | 3.02         | 3.29         | 3.39         |
+|                          |        | STD     | 0.55          | 1.44         | 1.43         | 1.54         | 1.41         |
+|                          | KF-ATC | Nominal | 2.70          | 6.34         | 10.76        | 6.20         | 9.66         |
+|                          |        | Mean    | 2.70          | 6.34         | 10.75        | 6.20         | 9.65         |
+|                          |        | STD     | 0.00          | 0.03         | 0.10         | 0.02         | 0.07         |
+|                          | TATC   | Nominal | 0.00          | 1.50         | 2.35         | 1.42         | 2.30         |
+|                          |        | Mean    | 0.10          | 1.59         | 2.46         | 1.70         | 2.64         |
+|                          |        | STD     | 0.26          | 0.27         | 0.37         | 0.41         | 0.55         |
+|                          | ITATC  | Nominal | 0.00          | 0.40         | 0.62         | 0.48         | 0.72         |
+|                          |        | Mean    | 0.06          | 0.71         | 1.15         | 0.94         | 1.37         |
+|                          |        | STD     | 0.23          | 0.31         | 0.51         | 0.38         | 0.59         |
+|                          | NTADC  | Nominal | 0.20          | 0.37         | 0.49         | 0.40         | 0.51         |
+|                          |        | Mean    | 0.18          | 0.39         | 0.56         | 0.42         | 0.53         |
+|                          |        | STD     | 0.06          | 0.06         | 0.11         | 0.04         | 0.06         |
+| Case 2:<br>With Noise    | IC     | Nominal | 0.20          | 2.08         | 2.85         | 2.07         | 2.83         |
+|                          |        | Mean    | 0.04          | 3.43         | 4.42         | 4.02         | 4.97         |
+|                          |        | STD     | 0.79          | 0.73         | 0.88         | 1.09         | 1.32         |
+|                          | KF-ATC | Nominal | 4.40          | 10.07        | 18.16        | 9.95         | 16.36        |
+|                          |        | Mean    | 4.40          | 10.09        | 18.19        | 9.97         | 16.40        |
+|                          |        | STD     | 0.00          | 0.12         | 0.27         | 0.09         | 0.21         |
+|                          | TATC   | Nominal | 0.20          | 2.55         | 3.79         | 2.46         | 3.53         |
+|                          |        | Mean    | 0.17          | 2.58         | 3.85         | 2.61         | 3.75         |
+|                          |        | STD     | 0.32          | 0.13         | 0.15         | 0.23         | 0.37         |
+|                          | ITATC  | Nominal | 0.20          | 2.08         | 2.84         | 2.08         | 2.83         |
+|                          |        | Mean    | 0.12          | 2.16         | 2.97         | 2.23         | 3.10         |
+|                          |        | STD     | 0.22          | 0.09         | 0.25         | 0.15         | 0.35         |
+|                          | NTADC  | Nominal | 0.20          | 2.13         | 2.92         | 2.11         | 2.89         |
+|                          |        | Mean    | 0.20          | 2.14         | 2.92         | 2.12         | 2.89         |
+|                          |        | STD     | 0.00          | 0.01         | 0.04         | 0.01         | 0.04         |
+
+performance in civil engineering structures as well.
+
+### 3.1. Virtual RTHS platform for high-speed train
+
+A lateral dynamic model for single-car high-speed trains was developed using MATLAB/SIMULINK to account for nonlinear wheel-rail contact, together with a linear multi-body model [36,14], as shown in Fig. 5. This dynamic model integrates a car body, two bogies, and four wheelsets, achieving a total of 17 degrees of freedom (DOF) through systematic allocation: each car body and bogie contributes 3 DOF (lateral, yaw, and roll motions), while each wheelset provides 2 DOF (lateral and yaw motions). When a train travels at speed  $V$ , due to the excitation of track irregularities, creep forces are generated between the wheel and rail. These creep forces can be regarded as the external dynamic loads on the train system. For the train dynamics and the calculation formulas of external dynamic loads, the details can be found in Reference [14].
+
+In the RTHS for high-speed trains, a hunting damper of the rear bogie is taken as the physical specimen, while the rest of the train system is simulated as the numerical substructure. It is worth noting that all dampers in the numerical substructure are modeled using linear models. A virtual RTHS platform in Fig. 6 has been developed in SIMULINK, which includes models for the numerical substructure, the damper specimen, the loading system, and a delay compensator. The specific test procedures of the RTHS for high-speed trains are as follows:
+
+- (1) Solve the train dynamic model using the Newmark algorithm to obtain the relative displacement of the physical hunting damper at the  $i$ -th step, i.e., the desired displacement;
+- (2) Implement a time-delay compensation scheme to acquire the actuator command at the  $i$ -th step;
+- (3) Apply the actuator command to the physical hunting damper;
+- (4) Measure the actual reaction force and actual displacement of the damper, and feed them back to the train model and the time-delay compensator;
+
+(5) Go to Step (1) with  $i = i + 1$  until completion of the test.
+
+Moreover, more detailed loading-specimen system model is shown in Fig. 7, which comprises a servo controller, a servo valve, an actuator [37] and a viscous damper. The parameters of the model are tabulated in Table 1. It is worth noting that, in the subsequent analysis, the nominal parameter values in Table 1 are used for the nominal analysis, while the “Standard deviation” values defined in reference [37] are adopted to randomly generate parameter disturbances, aiming to investigate the robustness of the methods.
+
+### 3.2. Compensator design
+
+To obtain the nominal and inverse models required for the NTADC method, a swept signal with a frequency range of 0.1–10 Hz, an amplitude of 1 mm, and a duration of 60 s was applied to the loading system and the specimen. Based on the command and measured displacements, a third-order nominal model for the loading-specimen system was then identified and expressed as:
+
+$$G_{0,3} = \frac{6.5361 \times 10^5}{s^3 + 208.6139s^2 + 1.5572 \times 10^4s + 6.919 \times 10^5} \quad (14)$$
+
+where  $s$  denotes the Laplace variable. A performance metric ( $J_{\text{NRMSE}}$ ) based on the normalized root mean square error representing how well the nominal model output fits the measured data is 99.31 %, and its expression is given by
+
+$$J_{\text{NRMSE}} = 100 \left( 1 - \frac{\| \mathbf{y}_{\text{measured}} - \mathbf{y}_{\text{model}} \|}{\| \mathbf{y}_{\text{measured}} - \bar{\mathbf{y}}_{\text{measured}} \|} \right) \quad (15)$$
+
+where  $\mathbf{y}_{\text{measured}}$  is the measured output data;  $\bar{\mathbf{y}}_{\text{measured}}$  is the mean of  $\mathbf{y}_{\text{measured}}$ ;  $\mathbf{y}_{\text{model}}$  is the output response of the nominal model;  $\| \cdot \|$  indicates the 2-norm of a vector.
+
+RTHS typically adopted discrete calculations and discrete controllers. Consequently, the corresponding discrete inverse model compensator, obtained by the backward difference method, is adopted in this study, namely
+
+$$\begin{aligned} \hat{y}_{i,3} &= \frac{u_i^{(3)} + 208.6139 \cdot u_i^{(2)} + 1.5572 \times 10^4 \cdot u_i^{(1)} + 6.919 \times 10^5 \cdot u_i}{6.5361 \times 10^5} \\ u_i^{(1)} &= \frac{u_i - u_{i-1}}{\Delta t}; \quad u_i^{(2)} = \frac{u_i - 2u_{i-1} + u_{i-2}}{\Delta t^2}; \quad u_i^{(3)} = \frac{u_i - 3u_{i-1} + 3u_{i-2} - u_{i-3}}{\Delta t^3} \end{aligned} \quad (16)$$
+
+where,  $u$  and  $\hat{y}_3$  are the input and output signals of the inverse controller, respectively;  $u^{(j)}$  denotes the  $j$ -th discrete derivative of  $u$ ;  $\Delta t$  is the sampling step.
+
+The NTADC method with a 4th order difference equation, incorporating five parameters (i.e.,  $w_1$ – $w_5$ ), is implemented. In the KF, the system and measured noise covariance matrices were configured as  $R = 1 \times 10^{-4}$  and  $Q = 0$ , respectively. In addition, the initial value of the parameters and the covariance matrix were set to  $\hat{W}_0 = [1; 0; \dots; 0]_{5 \times 1}$  and  $P_0 = 1000I_{5 \times 5}$ , where  $I$  is the identity matrix.
+
+The methods used for comparison include inverse control (IC), Kalman filter-based adaptive time-delay compensation (KF-ATC) [27], two-stage adaptive time-delay compensation (TATC) [29], and its improved scheme (ITATC) [14]. The KF-ATC method essentially constructs an adaptive inverse model of the loading system as a feedforward controller and uses a Kalman filter to estimate parameters in real time. The KF-ATC method adopts the same difference equations and parameter settings as the NTADC method. The only difference is that the initial parameter setting of the KF-ATC method is  $\hat{W}_0 = [10.81; -14.69; 3.80; 1.67; -0.58]$  to achieve faster parameter convergence. Note that this initial parameter value was determined in case 1.
+
+Based on the concept of time-delay segmentation, the TATC method uses PE method [18] in the first stage to compensate for the main time
+
+![Figure 8: Displacement time histories of different adaptive methods in Case 2. The figure consists of eight subplots arranged in a 4x2 grid, labeled (a) through (h). Each subplot shows Displacement (mm) on the y-axis and Time (s) on the x-axis. Subplots (a), (c), (e), and (g) show global views from 0 to 30 seconds. Subplots (b), (d), (f), and (h) show close-up views from 15 to 16 seconds. The legend in each plot identifies four series: Reference (red solid line), Command (magenta dashed line), Desired (green dotted line), and Measured (blue dashed line). The KF-ATC method (a, b) shows high-frequency noise. The TATC method (c, d) shows a smoother response with some noise. The ITATC method (e, f) shows a very noisy response. The NTADC method (g, h) shows a response similar to KF-ATC but with slightly better tracking.](55d2bfe1c3d04e86df8d7a104d802172_img.jpg)
+
+(a) Global view for KF-ATC method
+
+(b) Close-up view for KF-ATC method
+
+(c) Global view for TATC method
+
+(d) Close-up view for TATC method
+
+(e) Global view for ITATC method
+
+(f) Close-up view for ITATC method
+
+(g) Global view for NTADC method
+
+(h) Close-up view for NTADC method
+
+Figure 8: Displacement time histories of different adaptive methods in Case 2. The figure consists of eight subplots arranged in a 4x2 grid, labeled (a) through (h). Each subplot shows Displacement (mm) on the y-axis and Time (s) on the x-axis. Subplots (a), (c), (e), and (g) show global views from 0 to 30 seconds. Subplots (b), (d), (f), and (h) show close-up views from 15 to 16 seconds. The legend in each plot identifies four series: Reference (red solid line), Command (magenta dashed line), Desired (green dotted line), and Measured (blue dashed line). The KF-ATC method (a, b) shows high-frequency noise. The TATC method (c, d) shows a smoother response with some noise. The ITATC method (e, f) shows a very noisy response. The NTADC method (g, h) shows a response similar to KF-ATC but with slightly better tracking.
+
+Fig. 8. Displacement time histories of different adaptive methods in Case 2.
+
+delay of the loading system, and an adaptive time-delay compensation method [26] based on the least squares method with a forgetting factor (FLS-ATC) in the second stage to compensate for the residual time delay. Different from the TATC method, the ITATC method replaces the PE method with the IC method.
+
+With reference to the parameter settings in References [29,14], the TATC and ITATC methods use second-order difference equations. Additionally, in the least squares method with a forgetting factor, the initial parameter values, covariance matrix, and forgetting factor of the two methods are set as  $\theta_0 = [1; 0; 0]$ ,  $P_0 = 1000 \times I$ , and  $\lambda = 0.9999$ ,
+
+![Figure 9: Parameter estimation time histories of different adaptive methods in Case 2. The figure consists of four subplots: (a) KF-ATC method, (b) TATC method, (c) ITATC method, and (d) NTADC method. Each subplot shows the time history of parameters w1, w2, w3, w4, and w5 over a 30-second period. The y-axis is 'Parameter' ranging from -15 to 15, and the x-axis is 'Time(s)' ranging from 0 to 30. In (a), w1 starts at 10 and stabilizes at 5, w2 starts at -15 and stabilizes at -5, w3 starts at 5 and stabilizes at 0, w4 starts at 0 and stabilizes at 0, and w5 starts at 5 and stabilizes at 0. In (b), w1 starts at 1 and stabilizes at 0.5, w2 starts at 0 and stabilizes at 0.5, w3 starts at 0 and stabilizes at -0.2. In (c), w1 starts at 1 and stabilizes at 0.8, w2 starts at 0 and stabilizes at 0.4, w3 starts at 0 and stabilizes at -0.1. In (d), w1 starts at 1 and stabilizes at 0.7, w2 starts at 0 and stabilizes at 0.4, w3 starts at 0 and stabilizes at 0.2, w4 starts at 0 and stabilizes at 0.1, and w5 starts at 0 and stabilizes at -0.1.](c0843c6d138705289960d9f53a6e72a1_img.jpg)
+
+Figure 9: Parameter estimation time histories of different adaptive methods in Case 2. The figure consists of four subplots: (a) KF-ATC method, (b) TATC method, (c) ITATC method, and (d) NTADC method. Each subplot shows the time history of parameters w1, w2, w3, w4, and w5 over a 30-second period. The y-axis is 'Parameter' ranging from -15 to 15, and the x-axis is 'Time(s)' ranging from 0 to 30. In (a), w1 starts at 10 and stabilizes at 5, w2 starts at -15 and stabilizes at -5, w3 starts at 5 and stabilizes at 0, w4 starts at 0 and stabilizes at 0, and w5 starts at 5 and stabilizes at 0. In (b), w1 starts at 1 and stabilizes at 0.5, w2 starts at 0 and stabilizes at 0.5, w3 starts at 0 and stabilizes at -0.2. In (c), w1 starts at 1 and stabilizes at 0.8, w2 starts at 0 and stabilizes at 0.4, w3 starts at 0 and stabilizes at -0.1. In (d), w1 starts at 1 and stabilizes at 0.7, w2 starts at 0 and stabilizes at 0.4, w3 starts at 0 and stabilizes at 0.2, w4 starts at 0 and stabilizes at 0.1, and w5 starts at 0 and stabilizes at -0.1.
+
+Fig. 9. The parameter estimation time histories of different adaptive methods in Case 2.
+
+**Table 3**  
+Evaluation metrics for NTADC methods with different compensator parameters.
+
+| Compensator order | Type    | $J_1$ (ms) | $J_2$ (%) | $J_3$ (%) |
+|-------------------|---------|------------|-----------|-----------|
+| 2                 | Nominal | 0.20       | 0.44      | 0.78      |
+|                   | Mean    | 0.20       | 0.50      | 0.89      |
+|                   | STD     | 0.00       | 0.12      | 0.31      |
+| 4                 | Nominal | 0.20       | 0.38      | 0.49      |
+|                   | Mean    | 0.18       | 0.40      | 0.56      |
+|                   | STD     | 0.06       | 0.05      | 0.07      |
+| 6                 | Nominal | 0.20       | 0.36      | 0.56      |
+|                   | Mean    | 0.13       | 0.39      | 0.58      |
+|                   | STD     | 0.10       | 0.06      | 0.06      |
+
+**Table 4**  
+Evaluation metrics for NTADC methods with different nominal models.
+
+| Nominal model order | Type    | $J_1$ (ms) | $J_2$ (%) | $J_3$ (%) |
+|---------------------|---------|------------|-----------|-----------|
+| 1st                 | Nominal | 0.50       | 3.45      | 5.00      |
+|                     | Mean    | 0.50       | 3.46      | 5.03      |
+|                     | STD     | 0.00       | 0.13      | 0.17      |
+| 2nd                 | Nominal | 0.20       | 1.13      | 1.58      |
+|                     | Mean    | 0.20       | 1.14      | 1.60      |
+|                     | STD     | 0.00       | 0.08      | 0.12      |
+| 3rd                 | Nominal | 0.20       | 0.38      | 0.49      |
+|                     | Mean    | 0.18       | 0.40      | 0.56      |
+|                     | STD     | 0.06       | 0.05      | 0.07      |
+
+respectively. Note that the FLS-ATC method uses fewer parameters to reduce the adverse effects of high-frequency noise on the compensator. The PE method is given by
+
+$$\begin{aligned} d_i^c = & \left( 1 + \frac{11}{6}\eta + \eta^2 + \frac{1}{6}\eta^3 \right) d_i - \left( 3\eta + \frac{5}{2}\eta^2 + \frac{1}{2}\eta^3 \right) d_{i-1} \\ & + \left( \frac{3}{2}\eta + 2\eta^2 + \frac{1}{2}\eta^3 \right) d_{i-2} - \left( \frac{1}{3}\eta + \frac{1}{2}\eta^2 + \frac{1}{6}\eta^3 \right) d_{i-3} \end{aligned} \quad (17)$$
+
+where  $\eta = \tau / \Delta t$ ;  $\tau$  is the system delay;  $\Delta t$  is the time interval between the  $i$ -th and  $(i-1)$ -th desired displacements.  $d$  and  $d^c$  are the desired and command displacements, respectively; In this study,  $\tau$  and  $\Delta t$  were set to 23 ms and 5/4096 ms, respectively. Furthermore, the inverse mode required in the IC and ITATC method adopts Eq. (16).
+
+Five evaluation metrics  $J_1$ - $J_5$  are adopted to quantitatively evaluate the performance of compensation methods [37].  $J_1$  denotes the synchronization delay between the measured and desired displacements, calculated by
+
+$$J_1 = \arg_k \max \left( \sum_i d_{m,i} d_{i-k} \right) \quad (18)$$
+
+where  $d$  and  $d_m$  are the desired and measured displacements, respectively.  $J_2$  and  $J_3$  represent the root mean square (RMS) error and peak error of the measured and desired displacements, respectively, namely
+
+$$J_2 = \sqrt{\sum_{i=1}^{N} [d_{m,i} - d_i]^2} / \sqrt{\sum_{i=1}^{N} [d_i]^2} \times 100\% \quad (19)$$
+
+$$J_3 = \frac{\max |d_m - d|}{\max |d|} \times 100\% \quad (20)$$
+
+$J_4$  and  $J_5$  stand for the RMS error and the peak error, respectively, between the measured and reference displacements, given by
+
+![Figure 10: Parameter estimation time histories under different nominal models. (a) First-order nominal model: Parameter vs Time(s) from 0 to 30. (b) Second-order nominal model: Parameter vs Time(s) from 0 to 30. (c) Third-order nominal model: Parameter vs Time(s) from 0 to 30. All plots show five parameters: w1 (red), w2 (blue), w3 (green), w4 (cyan), and w5 (magenta).](a71911ad87414271aeb190e0eebcb989_img.jpg)
+
+Figure 10 consists of three subplots (a), (b), and (c) showing parameter estimation time histories for different nominal models. Each subplot plots five parameters (w1, w2, w3, w4, w5) against time from 0 to 30 seconds. In (a) the First-order nominal model, parameters w1, w3, and w5 start at 0 and increase, while w2 and w4 start at 0 and decrease. In (b) the Second-order nominal model, w1 and w3 start at 0 and increase, while w2 and w4 start at 0 and decrease. In (c) the Third-order nominal model, w1 starts at 1 and increases, while w2, w3, and w4 start at 0 and increase, and w5 starts at 0 and decreases.
+
+Figure 10: Parameter estimation time histories under different nominal models. (a) First-order nominal model: Parameter vs Time(s) from 0 to 30. (b) Second-order nominal model: Parameter vs Time(s) from 0 to 30. (c) Third-order nominal model: Parameter vs Time(s) from 0 to 30. All plots show five parameters: w1 (red), w2 (blue), w3 (green), w4 (cyan), and w5 (magenta).
+
+Fig. 10. the parameter estimation time histories under different nominal models.
+
+Table 5
+
+Evaluation metrics of NTADC and IC methods.
+
+| Method | Vehicle speed (km/h) | $J_1$ (ms) | $J_2$ (%) | $J_3$ (%) |
+|--------|----------------------|------------|-----------|-----------|
+| IC     | 300                  | 7.8        | 11.02     | 10.13     |
+|        | 350                  | 6.8        | 10.62     | 10.28     |
+|        | 400                  | 5.9        | 10.28     | 10.39     |
+|        | 450                  | 3.9        | 8.07      | 8.47      |
+| NTADC  | 300                  | 1.0        | 4.3       | 5.3       |
+|        | 350                  | 1.0        | 4.15      | 7.69      |
+|        | 400                  | 1.0        | 4.23      | 8.2       |
+|        | 450                  | 0.0        | 3.92      | 7.13      |
+
+$$J_4 = \sqrt{\sum_{i=1}^{N} [d_{m,i} - d_{ref,i}]^2} / \sqrt{\sum_{i=1}^{N} [d_{ref,i}]^2} \times 100\% \quad (21)$$
+
+$$J_5 = \frac{\max |d_m - d_{ref}|}{\max |d_{ref}|} \times 100\% \quad (22)$$
+
+where,  $d_{ref}$  is the reference displacement, provided by the overall vehicle dynamic simulation.
+
+### 3.3. Efficacy of delay compensation
+
+To investigate the effectiveness and robustness of the proposed NTADC method, a nominal model for the loading-specimen system is defined, with its parameters using only the nominal values shown in Table 1. Additionally, 20 sets of disturbance models for the system are randomly generated, whose parameters were produced by applying
+
+![Figure 11: MTS-xPC RTHS system. The diagram shows a block diagram of the system and a photograph of the physical setup. The block diagram includes an xPC real-time simulation system, a numerical substructure for a high-speed train, a time-delay compensator, and an MTS Loading System. The photograph shows the physical components: a load cell, a hunting damper, and the MTS Loading System.](3b621c21b0af3a504a28d2547e87138f_img.jpg)
+
+Figure 11 illustrates the MTS-xPC RTHS system. The block diagram shows the flow from the xPC real-time simulation system to the numerical substructure for a high-speed train, which provides a desired displacement to the time-delay compensator. The compensator then sends a command displacement to the MTS Loading System. The system measures force and displacement, which are fed back to the simulation. The photograph shows the physical components: a load cell, a hunting damper, and the MTS Loading System.
+
+Figure 11: MTS-xPC RTHS system. The diagram shows a block diagram of the system and a photograph of the physical setup. The block diagram includes an xPC real-time simulation system, a numerical substructure for a high-speed train, a time-delay compensator, and an MTS Loading System. The photograph shows the physical components: a load cell, a hunting damper, and the MTS Loading System.
+
+Fig. 11. MTS-xPC RTHS system.
+
+nominal values with random standard deviations in Table 1. In this paper, the nominal model and 20 disturbance models (a total of 21 cases) are employed to study the influence of loading-specimen system uncertainties on the delay compensator. Moreover, two cases of simulations are considered in this subsection. In Case 1, the measured signal is pristine, while in Case 2, the measured displacement is contaminated by white noise with a standard deviation of  $5 \times 10^{-3}$  mm. Note that both Case 1 and Case 2 consider a nominal model of the loading-specimen system and 20 disturbance models. The running speed of the train is set to 350 km/h. The IC, KF-ATC, TATC, and ITATC methods are performed for comparison.
+
+![Figure 12: Synchronization subplots for the desired-measured displacements. The figure consists of four subplots (a, b, c, d) showing Measured displacement (mm) versus Desired displacement (mm) for two methods: IC (dashed line) and NTADC (solid red line). (a) 300km/h: Measured displacement ranges from -0.4 to 0.8 mm, Desired from -0.4 to 0.6 mm. (b) 350km/h: Measured displacement ranges from -0.8 to 1.2 mm, Desired from -0.8 to 1.2 mm. (c) 400km/h: Measured displacement ranges from -0.8 to 1.2 mm, Desired from -0.8 to 1.2 mm. (d) 450km/h: Measured displacement ranges from -1.2 to 1.8 mm, Desired from -1.2 to 1.8 mm. In all cases, the NTADC method shows a tighter linear relationship between measured and desired displacement compared to the IC method.](91be14371a97fb5ce9eeb29ae18d07c3_img.jpg)
+
+Figure 12: Synchronization subplots for the desired-measured displacements. The figure consists of four subplots (a, b, c, d) showing Measured displacement (mm) versus Desired displacement (mm) for two methods: IC (dashed line) and NTADC (solid red line). (a) 300km/h: Measured displacement ranges from -0.4 to 0.8 mm, Desired from -0.4 to 0.6 mm. (b) 350km/h: Measured displacement ranges from -0.8 to 1.2 mm, Desired from -0.8 to 1.2 mm. (c) 400km/h: Measured displacement ranges from -0.8 to 1.2 mm, Desired from -0.8 to 1.2 mm. (d) 450km/h: Measured displacement ranges from -1.2 to 1.8 mm, Desired from -1.2 to 1.8 mm. In all cases, the NTADC method shows a tighter linear relationship between measured and desired displacement compared to the IC method.
+
+Fig. 12. Synchronization subplots for the desired-measured displacements.
+
+Table 2 provides evaluation metrics for different time-delay compensation methods. Note that in Table 2 and subsequent tables, “Nominal” refers to the evaluation metrics obtained from the virtual RTHS using the nominal loading-specimen model, while “Mean” and “STD” represent the mean and standard deviation of 20 sets of evaluation metrics from the virtual RTHS with different disturbance models.
+
+For the IC method, the  $J_2$  -  $J_5$  metrics of the Nominal case are usually smaller than those mean values in both cases. This indicates that variations in the parameters of the loading system lead to a deterioration in the compensation performance of the inverse model, which suggests that the robustness of this method is unsatisfactory. This results from that the IC method is implemented with a deterministic linear nominal model of the loading-specimen system, and cannot accommodate model uncertainties. Additionally, it can be observed that all nominal and mean metrics of the KF-ATC method are significantly higher than those of the other four methods in all cases, exhibiting the worst compensation effect. This can be attributed to the fact that in a large time-delay system, when compensating for loading signals with abundant high-frequency components, the KF-ATC method has difficulties in estimating parameters in real time and accurately, as well as in parameter initialization. Notably, for the KF-ATC method, all indices corresponding to STD are very small, indicating good robustness. This is because KF possesses efficient and stable parameter estimation performance.
+
+Further analysis reveals that, in terms of Mean and STD, the  $J_2$  -  $J_5$  metrics of the two-stage compensation strategies TATC, ITATC, and NTADC are substantially lower than those of the IC method in all cases. Among them, the  $J_2$  -  $J_5$  metrics of the NTADC method are smaller, especially for STD. Moreover, compared with the other four methods, all metrics corresponding to the Mean case of the NTADC method are closer to those of the Nominal case. This highlights that, in view of system
+
+uncertainties and measurement noise, the proposed method is capable of achieving excellent delay compensation performance and exhibits better robustness in RTHS. Entries in Table 2 with values equal to or lower than the counterparts are highlighted in bold for emphasis.
+
+The displacement time histories of different adaptive compensation methods in Case 2 are given in Fig. 8. It can be observed from Fig. 8(b), (d), (f) and (h) that the desired, measured, and reference displacements of the two-stage compensation strategies (TATC, ITATC, and NTADC) are more consistent compared with the single-stage compensation method KF-ATC. Further analysis reveals that the command displacements of TATC and ITATC methods exhibit undesired high-frequency displacements with varying amplitudes. This is because in both methods, the second-stage compensators (i.e., PE or IC methods) further amplify the measurement noise introduced by the first-stage adaptive time-delay compensator. However, these amplified high-frequency signals not only affect the compensator's performance but may also exceed the safety limits of the test system, leading to test interruption. By contrast, such issues are not prominent in the NTADC method. This underscores that the NTADC method maintains excellent displacement tracking even with the presence of system uncertainties and noise disturbance.
+
+Fig. 9 shows the parameter estimation time histories of different adaptive compensation methods in Case 2. From Fig. 9(a) and (c), it can be observed that three parameter estimates of the TATC and ITATC method do not converge but exhibit small-range fluctuations as time increases. This is because the least squares method with a forgetting factor enhances the utilization weight of new data. In contrast, five parameter estimates of the KF-ATC and NTADC methods eventually converge to a constant, indicating that KF has efficient and stable parameter estimation capabilities.
+
+![Figure 13: Synchronization error histories for the desired-measured displacements. The figure consists of four subplots (a, b, c, d) showing Displacement (mm) versus Time (s) from 0 to 25 seconds. Each subplot compares the Inverse Controller (IC) method (dashed black line) and the NTADC method (solid red line). (a) 300km/h: Displacement range is approximately -0.08 to 0.08 mm. (b) 350km/h: Displacement range is approximately -0.1 to 0.1 mm. (c) 400km/h: Displacement range is approximately -0.1 to 0.1 mm. (d) 450km/h: Displacement range is approximately -0.1 to 0.1 mm. In all cases, the NTADC method shows significantly smaller synchronization errors compared to the IC method.](7801d00a216dc4dc8a7d210dcb5fe3c5_img.jpg)
+
+Figure 13: Synchronization error histories for the desired-measured displacements. The figure consists of four subplots (a, b, c, d) showing Displacement (mm) versus Time (s) from 0 to 25 seconds. Each subplot compares the Inverse Controller (IC) method (dashed black line) and the NTADC method (solid red line). (a) 300km/h: Displacement range is approximately -0.08 to 0.08 mm. (b) 350km/h: Displacement range is approximately -0.1 to 0.1 mm. (c) 400km/h: Displacement range is approximately -0.1 to 0.1 mm. (d) 450km/h: Displacement range is approximately -0.1 to 0.1 mm. In all cases, the NTADC method shows significantly smaller synchronization errors compared to the IC method.
+
+Fig. 13. Synchronization error histories for the desired-measured displacements.
+
+### 3.4. Parameter analysis
+
+Clearly, the compensator order of the KF-ANMC method, and the inverse controller order (namely the nominal model order) are two important parameters for this two-stage compensation methods. Therefore, in this section, the impacts are explored for both on the compensation performance. Meanwhile, the cases that consist of one with nominal model parameters and 20 sets of random disturbance models for the loading-specimen system also are considered herein. It should be highlighted that the reference displacement at a vehicle speed of 350 km/h is utilized as the desired displacement here, so only the  $J_1$ - $J_3$  metrics are employed to evaluate the performance of the NTADC method.
+
+#### 3.4.1. Compensator orders of the KF-ANMC
+
+In this subsection, three KF-ANMC schemes with the compensator order  $N = 2, 4$ , and  $6$  in Eq. (7) are considered, resulting in  $3, 5$ , and  $7$  compensator parameters, respectively. The remaining parameters of these methods are set the same as those in Section 3.2, including the nominal model and inverse model. Note that the initial values of the covariance matrix and the parameters are set as  $P_0 = 1000I_{n \times n}$  and  $\widehat{W}_0 = [1; 0; \dots; 0]_{n \times 1}$  ( $n \in [3, 5, 7]$ ) in the KF method, separately, in which only the dimensions of the covariance matrix and the parameters are changed.
+
+In Table 3, the evaluation metrics for NTADC schemes with different compensator orders are listed. As the order increases, the  $J_1$  metric varies in terms of Nominal and Mean; and the  $J_2$  metric gradually reduces. The  $J_3$  metric initially decreases and subsequently rises. This implies that increasing the compensator order effectively reduces the RMS errors, but also induces an upward trend in the peak displacement
+
+errors. All the  $J_1$ - $J_3$  metrics corresponding to the STD are exceptionally small, which means that the NTADC method features excellent robustness. Furthermore, the  $J_2$ - $J_3$  metrics corresponding to the Nominal and Mean for three NTADC schemes are less than 1 %, indicating that the performance of the NTADC method is slightly impacted by the compensator order.
+
+#### 3.4.2. Nominal model orders
+
+With the same offline identification approach of the loading-specimen system as in Section 3.2, the first- and second-order nominal models can be attained as
+
+$$G_{0,1}(s) = \frac{43.0272}{s + 41.5799} \quad (23)$$
+
+$$G_{0,2}(s) = \frac{3.1316 \times 10^3}{s^2 + 71.6936s + 3.3152 \times 10^3} \quad (24)$$
+
+where the  $J_{\text{NRMSEs}}$  corresponding to Eqs. (23) and (24) are 91.8 % and 99 %, respectively. The corresponding first- and second-order discrete inverse models are given by
+
+$$\widehat{Y}_{i,1} = \frac{u_i^{(1)} + 41.5799 \cdot u_i}{43.0272} \quad (25)$$
+
+$$\widehat{Y}_{i,2} = \frac{u_i^{(2)} + 71.6936 \cdot u_i^{(1)} + 3.3152 \times 10^3 \cdot u_i}{3.1316 \times 10^3} \quad (26)$$
+
+In addition, the third-order nominal model and its corresponding inverse model are provided in Eqs. (14) and (16), respectively. Note that the other parameter values for the NTADC methods used herein are the same as in Section 3.2.
+
+
+
+![Figure 14: Hysteretic curves of physical dampers under different compensation cases. The figure consists of four subplots (a, b, c, d) showing Force (kN) vs. Displacement (mm). Each subplot compares the Inverse Compensator (IC) method (solid blue line) and the NTADC method (dashed red line). (a) 300km/h: Force range -2 to 2 kN, Displacement range -0.6 to 0.6 mm. (b) 350km/h: Force range -3 to 3 kN, Displacement range -0.8 to 0.8 mm. (c) 400km/h: Force range -3 to 3 kN, Displacement range -1 to 1 mm. (d) 450km/h: Force range -4 to 4 kN, Displacement range -1.5 to 1.5 mm. In all cases, the NTADC method shows a significantly tighter hysteresis loop compared to the IC method, indicating better compensation performance.](10c82dcc5f2c237961329dd29d65859c_img.jpg)
+
+Figure 14: Hysteretic curves of physical dampers under different compensation cases. The figure consists of four subplots (a, b, c, d) showing Force (kN) vs. Displacement (mm). Each subplot compares the Inverse Compensator (IC) method (solid blue line) and the NTADC method (dashed red line). (a) 300km/h: Force range -2 to 2 kN, Displacement range -0.6 to 0.6 mm. (b) 350km/h: Force range -3 to 3 kN, Displacement range -0.8 to 0.8 mm. (c) 400km/h: Force range -3 to 3 kN, Displacement range -1 to 1 mm. (d) 450km/h: Force range -4 to 4 kN, Displacement range -1.5 to 1.5 mm. In all cases, the NTADC method shows a significantly tighter hysteresis loop compared to the IC method, indicating better compensation performance.
+
+Fig. 14. Hysteretic curves of physical dampers under different compensation cases.
+
+Table 4 gives the evaluation metrics for the NTADC schemes applied with the nominal models of different orders. As the order of the nominal model increases, the  $J_1$ - $J_3$  metrics corresponding to three types decrease progressively, indicating that the increase of the model orders can effectively enhance the performance of the proposed method. Furthermore, all  $J_1$ - $J_3$  metrics corresponding to STD remain nearly zero, highlighting the outstanding robustness of the NTADC method. Notably, the NTADC method employing the first-order and third-order nominal models exhibits noteworthy variations in the  $J_2$ - $J_3$  metrics corresponding to the Nominal and Mean. This observation is attributable to the lower identification accuracy of the first-order nominal model, thereby compounding the difficulty of parameter identification and degrading the compensation effect. Conversely, in terms of the Nominal and Mean, the  $J_2$ - $J_3$  metrics for the NTADC method using the second-order and third-order nominal models remain below 2%, with minimal differences between the two. Consequently, the utilization of second-order or third-order nominal models for the NTADC method is sufficient to accomplish satisfactory compensation.
+
+Fig. 10 presents the time histories of the parameter estimation for the NTADC method with different nominal models. In Fig. 10, with the increase in the order of the nominal model, the estimated parameters  $w_1$ - $w_5$  of the NTADC method exhibit smaller variations and converge more rapidly. This means that as the order of the nominal model increases, the requirement for initial parameters of the compensator decreases. Given the compensation results presented in Table 5, when the compensator uses a nominal model not lower than second order, the initial parameters can be defined as  $[1; 0; \dots; 0]_{n \times 1}$  to simplify the design of the compensator, where  $n$  denotes the number of compensator parameters.
+
+# 4. Experimental validation
+
+## 4.1. Test system
+
+In this section, validation tests are described in detail, which were performed by utilizing the MTS-xPC RTHS platform at the Structural and Seismic Testing Center. This test platform consists of an MTS loading system and an xPC real-time simulation system, with digital-to-analogy and analogy-to-digital converters facilitating data exchange between the two systems. In the RTHS for high-speed trains, a hunting damper on the train's rear bogie shown in Fig. 5 is used as the specimen, while the remaining train system serves as the numerical substructure. The MTS loading system applies command displacements to the specimen and measures actual displacements and forces. Meanwhile, the xPC simulation system handles train model calculation and delay compensation implementation. The specimen, a hunting damper, is mounted in series with the MTS actuator, as shown in Fig. 11. The stroke of the damper specimen is 256 mm, the maximum length is 830 mm, and the maximum piston speed should be below 0.2 m/s.
+
+## 4.2. Compensator design
+
+The implementation processes of the inverse model in the NTADC method and the IC method were the same as those in Section 3.2, in which the same swept signal was applied to the test system. Eventually, the third-order nominal model of the loading-specimen system could be obtained as
+
+$$G_{0,3} = \frac{1.05 \times 10^6}{s^3 + 94.93s^2 + 1.763 \times 10^4 s + 1.03 \times 10^6} \quad (27)$$
+
+where, the identification accuracy, i.e. J\_NRMSE, is 97.54 %. The corresponding discrete inverse compensator is presented by
+
+![Figure 15: Evaluation metrics for NTADC schemes with different first-stage compensator orders. The figure consists of four bar charts (a, b, c, d) showing the value of evaluation metrics J1, J2, and J3 for 2nd, 4th, and 6th order compensators at vehicle speeds of 300km/h, 350km/h, 400km/h, and 450km/h respectively. The y-axis represents the 'Value of evaluation metric' and the x-axis represents the metrics J1, J2, and J3. The legend indicates: 2nd order (red), 4th order (pink), and 6th order (light blue).](f176174c2978785e86a8352bd45e322e_img.jpg)
+
+| Speed (km/h) | Metric     | 2nd order | 4th order | 6th order |
+|--------------|------------|-----------|-----------|-----------|
+| 300          | $J_1$ (ms) | ~2.0      | ~1.0      | ~1.0      |
+|              | $J_2$ (%)  | ~4.8      | ~4.2      | ~4.2      |
+|              | $J_3$ (%)  | ~5.8      | ~5.4      | ~6.5      |
+| 350          | $J_1$ (ms) | ~1.0      | ~1.0      | ~1.0      |
+|              | $J_2$ (%)  | ~4.5      | ~4.2      | ~3.8      |
+|              | $J_3$ (%)  | ~8.2      | ~7.8      | ~8.0      |
+| 400          | $J_1$ (ms) | ~1.0      | ~1.0      | ~1.0      |
+|              | $J_2$ (%)  | ~4.5      | ~4.2      | ~4.0      |
+|              | $J_3$ (%)  | ~8.5      | ~8.2      | ~9.8      |
+| 450          | $J_1$ (ms) | ~1.0      | ~1.0      | ~1.0      |
+|              | $J_2$ (%)  | ~4.8      | ~4.2      | ~4.2      |
+|              | $J_3$ (%)  | ~7.8      | ~7.5      | ~8.0      |
+
+Figure 15: Evaluation metrics for NTADC schemes with different first-stage compensator orders. The figure consists of four bar charts (a, b, c, d) showing the value of evaluation metrics J1, J2, and J3 for 2nd, 4th, and 6th order compensators at vehicle speeds of 300km/h, 350km/h, 400km/h, and 450km/h respectively. The y-axis represents the 'Value of evaluation metric' and the x-axis represents the metrics J1, J2, and J3. The legend indicates: 2nd order (red), 4th order (pink), and 6th order (light blue).
+
+Fig. 15. Evaluation metrics for NTADC schemes with different first-stage compensator orders.
+
+$$y_{i,3} = \frac{u_i^{(3)} + 94.93u_i^{(2)} + 1.763 \times 10^4 u_i^{(1)} + 1.03 \times 10^6 u_i}{1.05 \times 10^6} \quad (28)$$
+
+The NTADC method employs a 4th order difference equation for the first stage compensation, namely KF-ANMC. In the KF method, the initial value of the covariance matrix was set to  $P_0 = I_{5 \times 5}$ , while all other parameter values remain identical to those presented in Section 3.2.
+
+## 4.3. Performance of time-delay compensation
+
+Figs. 12 and 13 show synchronization subplots and synchronization error histories for the IC and NTADC methods with different vehicle speeds. In Fig. 12, the NTADC method provides narrower subplots than the IC method. This implies that the NTADC method causes better agreement between the measured and desired displacements. In Fig. 13, displacement control errors of the NTADC method are significantly smaller than those of the IC method across various vehicle speeds, with a maximum displacement error of only 0.076 mm. This highlights the superior delay compensation performance of the proposed method.
+
+Table 5 lists the evaluation metrics for the IC and NTADC methods with different vehicle speeds. It can be observed that the metrics associated with the IC method are notably high, which is a clear indication of rather poor compensation performance. In contrast, the  $J_1$ – $J_3$  metrics of the NTADC method remain at a relatively low level across various vehicle speeds. This demonstrates the effectiveness of the NTADC method in enhancing RTHS accuracy and robustness, thereby validating the necessity and efficacy of the designed KF-ANMC scheme. Moreover, the  $J_1$  metric of the IC method progressively decreases with increasing
+
+vehicle speed, which might be attributed to the nonlinearities inherent in the loading system and the specimen, as well as the varying dominant frequency of the actuator command signal.
+
+Fig. 14 shows the hysteresis curves of physical hunting dampers obtained by the high-speed train RTHS using different time-delay compensation methods at various vehicle speeds. It is obvious that the force-displacement curves of physical dampers exhibit strong nonlinear characteristics, and both the displacement and force of the dampers increase with the rise of vehicle speed. This is because the increase in vehicle speed intensifies the hunting motion of the train, causing the hunting dampers to generate greater damping forces to reduce the hunting vibration of the train. It is noteworthy that the damper specimen displays a certain degree of slip under minor displacements; however, this slip becomes less apparent under substantial displacements. This finding underscores the importance of proper installation and connection of the displacement meter during the test procedure. Moreover, these phenomena can only be discovered through experimentation, as numerical methods are inadequate of simulating them.
+
+## 4.4. Parameter analysis
+
+### 4.4.1. Order of the KF-ANMC
+
+In addition to the NTADC method with the 4th order first-stage compensator (i.e. KF-ANMC) in Section 4.2, this method with 2nd and 6th orders is considered in this subsection. The other parameter values remain the same as those in Section 4.2.
+
+To clearly analyze the impact of the first-stage compensator orders on the NTADC method performance, bar charts of the evaluation metrics
+
+![Figure 16: Frequency domain plots of the NTADC scheme. The figure consists of four subplots (a, b, c, d) showing Displacement (mm) versus Frequency (Hz) for vehicle speeds of 300km/h, 350km/h, 400km/h, and 450km/h, respectively. Each plot compares Desired (red solid line) and Measured (blue dashed line) displacement. An inset in each plot zooms in on the 5-7 Hz frequency range. The main plots show a dominant peak around 2 Hz, while the insets show detailed agreement between desired and measured signals in the 5-7 Hz range.](b05a8a3551db31147979064952179990_img.jpg)
+
+Figure 16: Frequency domain plots of the NTADC scheme. The figure consists of four subplots (a, b, c, d) showing Displacement (mm) versus Frequency (Hz) for vehicle speeds of 300km/h, 350km/h, 400km/h, and 450km/h, respectively. Each plot compares Desired (red solid line) and Measured (blue dashed line) displacement. An inset in each plot zooms in on the 5-7 Hz frequency range. The main plots show a dominant peak around 2 Hz, while the insets show detailed agreement between desired and measured signals in the 5-7 Hz range.
+
+Fig. 16. Frequency domain plots of the NTADC scheme.
+
+**Table 6**  
+Evaluation metrics for the NTADC scheme.
+
+| Vehicle speed (km/h) | $J_1$ (ms) | $J_2$ (%) | $J_3$ (%) |
+|----------------------|------------|-----------|-----------|
+| 300                  | 1          | 3.78      | 5.13      |
+| 350                  | 1          | 3.66      | 7.22      |
+| 400                  | 1          | 3.93      | 9.18      |
+| 450                  | 1          | 4.08      | 7.73      |
+
+for the NTADC method with different compensator orders are provided, as illustrated in Fig. 15. With different vehicle speeds, as the orders increase, the  $J_1$  metric remain largely unchanged; the  $J_2$  metric progressively decrease overall; and the  $J_3$  metric first decrease and then increase. These observations align with the simulation results presented in Section 3.4.1, which are attributed to the fact that the Kalman filter is a parameter estimation method based on the minimum mean square error criterion. Furthermore, for different compensator orders, the largest variations in the  $J_2$ - $J_3$  metrics are less than 1 % and 2 %, respectively, indicating that the influence of the first-stage compensator orders on the NTADC method performance is limited.
+
+### 4.4.2. Orders of the nominal model
+
+The delay compensation effect of the NTADC scheme using a third-order nominal model has been discussed in Section 4.2. Therefore, the influence of a second-order nominal model on the performance of the NTADC scheme is analyzed in this subsection. By employing the same offline identification process for the loading-specimen system as described in Section 4.2, a second-order nominal model can be obtained as
+
+$$G_0(s) = \frac{1.101 \times 10^4}{s^2 + 161.3s + 1.082 \times 10^4} \quad (29)$$
+
+where, the identification goodness, i.e. J.NRMSE, is 95.77 %. The corresponding discrete inverse model is given by
+
+$$y_{1,2} = \frac{u_i^{(2)} + 161.3 \cdot u_i^{(1)} + 1.082 \times 10^4 \cdot u_i}{1.101 \times 10^4} \quad (30)$$
+
+One should note that the parameter values for the NTADC method are the same as in Section 4.2.
+
+The displacement plots in the frequency domain of the NTADC scheme using the second-order nominal model at different vehicle speeds are presented in Fig. 16. It can be noticed that the dominant frequencies of the displacement signal gradually increase with vehicle speeds, which is one of the factors resulting in varying delays of the loading system. From the overall and local plots (5–7 Hz), there are good agreements between the measured and desired displacement signals at different vehicle speeds. These results demonstrate that the NTADC scheme delivers high-fidelity compensation in the RTHS across mid- to high-frequency ranges (5–7 Hz), while ensuring robust signal reproduction capabilities.
+
+The evaluation metrics for the NTADC method utilizing the second-order nominal model are presented in Table 6. Comparative analysis with Table 5 reveals that, with different vehicle speeds, the  $J_1$ - $J_3$  metrics for the NTADC method with the second-order nominal model demonstrate significant improvements compared to the IC method, implying that the NTADC scheme with the second-order nominal model still effectively enhances the RTHS accuracy. Additionally, with different vehicle speeds, the  $J_1$ - $J_2$  metrics for the NTADC method utilizing the second-order nominal model consistently remain below 1 ms and 4.5 %, respectively. This indicates that the NTADC methods with second-order and third-order nominal models can provide satisfactory compensation performance, exhibiting strong robustness.
+
+# 5. Summary and conclusions
+
+To effectively address varying delays of loading-specimen systems, improve compensation accuracy and robustness, a novel two-stage adaptive delay compensation method based on a system nominal model is presented in this paper, which is suitable for real-time hybrid simulation of civil engineering structures, vehicles, and other fields. This method integrates an adaptive nominal model compensation using a Kalman filter (KF-ANMC) and an inverse control (IC) compensation. The former can effectively accommodate system uncertainties and enhance the robustness and applicability of the compensation, while the latter can eliminate system delay and improve the accuracy of the RTHS. The effectiveness and robustness of the proposed method are verified by the numerical simulations and real tests for high-speed train RTHS. The impact of the relevant parameters on the performance of the proposed method is also thoroughly analyzed. The main conclusions are as follows.
+
+- (1) Numerical simulations and real tests have shown that the proposed method exhibits superior delay compensation performance and strong robustness compared to the IC method, and maintains a strong reproduction capability for moderate and high-frequency signals (5–7 Hz) in RTHS of high-speed trains.
+- (2) Parameter analysis reveals that the proposed method is little impacted by the compensator order of KF-ANMC, and the initialization of the parameters is straightforward. For the second stage compensation, inverse compensation based on second-order and third-order nominal models can provide satisfactory performance.
+- (3) The KF-ANMC method essentially integrates the concepts of model-reference control and adaptive time-delay compensation. Both virtual simulations and experimental results demonstrate that this method is not only simple and user-friendly but also highly robust. Its compensation performance remains largely unaffected by variations in model order and parameter initialization settings. These findings highlight the significant potential of the proposed method for practical engineering applications.
+
+In future research, the proposed method will be applied to the control of multi-axis actuators in large-scale structural real-time hybrid simulations. This application aims to further examine the method applicability and its performance in compensation under more complex conditions. However, this process will also present several potential challenges. These include the nonlinear coupling effects among multi-axis actuators, the increased computational complexity of the compensator, and the difficulties associated with optimizing the compensator parameters.
+
+# CRediT authorship contribution statement
+
+**Cheng Chen:** Writing – review & editing. **Oreste S. Bursi:** Writing – review & editing. **Xuejun Jia:** Writing – review & editing. **Zhen Wang:** Writing – review & editing, Funding acquisition. **Jiajun Xiao:** Writing – review & editing, Writing – original draft, Validation, Data curation. **Bin Wu:** Funding acquisition.
+
+# Declaration of Competing Interest
+
+The authors declare no conflicts of interest.
+
+# Acknowledgments
+
+The research and publication of this article were funded by the National Natural Science Foundation of China (Grant No. 52078398, 52278211). The work was also supported by the Major Science and Technology Project of Hainan Province (Grant No. ZDKJ2021024).
+
+# Data availability
+
+Data will be made available on request.
+
+# References
+
+- [1] Alonso A, Giménez J, Gomez E. Yaw damper modelling and its influence on railway dynamic stability. *Veh Syst Dyn* 2011;49(9):1367–87.
+- [2] Huang C, Dai H, Qu S. Suppression of carbody hunting for a locomotive caused by low wheel-rail contact conicity by optimising yaw damper location. *Veh Syst Dyn* 2024;62(9):2237–59.
+- [3] Guo Z, Chi M, Sun J, Li Y, Dai L. Experimental and numerical research on the bogie hunting of a high-speed train caused by the empty stroke of yaw damper. *Veh Syst Dyn* 2024;62(7):1637–57.
+- [4] Nakashima M, Kato H, Takaoka E. Development of real-time pseudo dynamic testing. *Earthq Eng Struct Dyn* 1992;21(1):79–92.
+- [5] Tang Z, Liu H, Dietz M, Chatzigiogos CT, Du X. Nonlinear behavior simulation of soil-structure interaction system via real-time hybrid testing. *Bull Earthq Eng* 2022;20:6109–28.
+- [6] Park J, Park M, Chae Y, Kim C. Real-time hybrid simulation for investigating the influence of vertical ground motions on the lateral response of RC piers. *Earthq Eng Struct Dyn* 2023;52(10):2928–44.
+- [7] Xu G, Zheng L, Wu B, Wang Z, Sun G, Zhang X, et al. A real-time hybrid testing based on shaking table and actuator for cable tray systems. *Eng Struct* 2023;284:115977.
+- [8] Guo W, Zeng C, Gou H, Gu Q, Wang T, Zhou H, et al. Real-time hybrid simulation of high-speed train-track-bridge interactions using the moving load convolution integral method. *Eng Struct* 2021;228:111537.
+- [9] Sun C, Song W, Jahangiri V. A real-time hybrid simulation framework for floating offshore wind turbines. *Ocean Eng* 2022;265:112529.
+- [10] Safwan A, James R, Qasim A, Muhammad S, Richard S, Thomas M. Coupled aero-hydro-geotech real-time hybrid simulation of offshore wind turbine monopile structures. *Eng Struct* 2024;303:117463.
+- [11] Yang S, Zhao Y, Liu Y, Liao Y, Wang P. A new semi-active control strategy on lateral suspension systems of high-speed trains and its application in HiL test rig. *Veh Syst Dyn* 2023;61(5):1317–44.
+- [12] Jenis F, Kubík M, Michálek T, Strecker Z, Žáček J, Mazúrek I. Effect of the magnetorheological damper dynamic behaviour on the rail vehicle comfort: hardware-in-the-loop simulation. *Actuators* 2023;12(2):47.
+- [13] Isacchi G, Ripamonti F. An experimental methodology to support development of yaw damper prototypes based on a hardware-in-the-loop test bench. *Veh Syst Dyn* 2023;61:1–18.
+- [14] Wang Z, Xiao J, Zhang B, Yang G, Wu B, Jia X. Performance of real-time hybrid simulation for hunting dampers of high-speed trains. *Struct Control Health Monit* 2024;2024:4984025.
+- [15] Facchinetti A, Bruni S. Hardware-in-the-loop hybrid simulation of pantograph-catenary interaction. *J Sound Vib* 2012;331:27832797.
+- [16] Gil J, Tur M, Gregori S, Correcher A, Pedrosa AM, Fuenmayor FJ. Hardware-in-the-loop simulations of a railway pantograph with a finite element periodic catenary model. *Veh Syst Dyn* 2024;62(3):695–718.
+- [17] Koganei R, Watanabe N, Sasaki K, Maki Y, Yamaguchi T, Shimomura T. Development of virtual running test environment for railway vehicles based on hardware-in-the-loop simulation to reproduce actual running on a track. *Mech Eng J* 2017;4(1):16–00516.
+- [18] Horichi T, Inoue M, Konno T, Namita Y. Real-time hybrid experimental system with actuator delay compensation and its application to a piping system with energy absorber. *Earthq Eng Struct Dyn* 1999;28(10):1121–41.
+- [19] Wallace MI, Sieber J, Neild SA, Wagg DJ, Krauskopf B. Stability analysis of real-time dynamic substructuring using delay differential equation models. *Earthq Eng Struct Dyn* 2005;34(15):1817–32.
+- [20] Tang Y, Qin H. Stability and accuracy analysis of real-time hybrid simulation (RTHS) with incomplete boundary conditions and actuator delay. *Int J Struct Stab Dyn* 2020;20(11):2050122.
+- [21] Carrion JE, Spencer JF. Model-Based Strategies for Real-time Hybrid Testing. Nsel Report Series. Champaign: University of Illinois at Urbana; 2007.
+- [22] Zhou Z, Li N. Improving model-based compensation method for real-time hybrid simulation considering error of identified model. *J Vib Control* 2021;27(21–22):2523–35.
+- [23] Darby AP, Williams MS, Blakeborough A. Stability and delay compensation for real-time substructure testing. *J Eng Mech* 2002;128(12):1276–84.
+- [24] Chae Y, Kazemibidokhti K, Ricles JM. Adaptive time series compensator for delay compensation of servo-hydraulic actuator systems for real time hybrid simulation. *Earthq Eng Struct Dyn* 2013;42(11):1697–715.
+- [25] Wallace MI, Wagg DJ, Neild SA. An adaptive polynomial based forward prediction algorithm for multi-actuator real-time dynamic substructuring. *Proc R Soc* 2005;61(2064):3807–26.
+- [26] Wang Z, Xu G, Li Q, Wu B. An adaptive delay compensation method based on a discrete system model for real-time hybrid simulation. *Smart Struct Syst* 2020;25(5):569–80.
+- [27] Ning X, Wang Z, Wu B. Kalman filter-based adaptive delay compensation for benchmark problem in real-time hybrid simulation. *Appl Sci* 2020;10(20):7101.
+- [28] Huang W, Ning X, Ding Y, Wang Z. A novel actuation dynamics adaptive compensation strategy for real-time hybrid simulation based on unscented kalman filter. *Int J Struct Stab Dyn* 2023;23(10):2350107.
+
+- [29] Wang Z, Ning X, Xu G, Zhou H, Wu B. High performance compensation using an adaptive strategy for real-time hybrid simulation. *Mech Syst Signal Process* 2019; 133:106262.
+- [30] Wang T, Gong Y, Xu G, Wang Z. Unscented kalman filter-based two-stage adaptive compensation method for real-time hybrid simulation. *J Earthq Eng* 2024;28(11): 3221–55.
+- [31] Ning X. Mixed sensitivity-based robust  $H_\infty$  control method for real-time hybrid simulation. *Symmetry* 2021;13(5):840.
+- [32] Li H, Maghareh A, Wilfredo Condori Uribe J, Montoya H, Dyke SJ, Xu Z. An adaptive sliding mode control system and its application to real-time hybrid simulation. *Struct Control Health Monit* 2022;29(1):e2851.
+- [33] Zhou H, Zhang B, Shao X, Tian Y, Guo W, Gu Q, et al. Adaptive compensation method for real-time hybrid simulation of train-bridge coupling system. *Struct Eng Mech* 2022;83(1):93–108.
+- [34] Zeng C, Guo W, Shao P. Performance study of model predictive control with reference prediction for real-time hybrid simulation. *J Vib Control* 2024;30(7-8): 1659–73.
+- [35] Ning X, Huang W, Xu G, Wang Z, Wu B, Zheng L, et al. A novel model-based adaptive feedforward-feedback control method for real-time hybrid simulation considering additive error model. *Struct Control Health Monit* 2023;2023: 5550580.
+- [36] Zong L, Gong X, Xuan S, Guo C. Semi-active  $H_\infty$  control of high-speed railway vehicle suspension with magnetorheological dampers. *Veh Syst Dyn* 2013;51(5): 600–26.
+- [37] Silva CE, Gomez D, Maghareh A, Dyke SJ, Spencer BF. Benchmark control problem for real-time hybrid simulation. *Mech Syst Signal Process* 2020;135:106381.
+- [38] Duo X, Zhang B, Zheng H, Li H, Huang C, Wang Z, et al. Real-time hybrid test method for hunting dampers of high-speed vehicles. *J Vib Shock* 2022;41(22): 99–104.
+- [39] Zhao J, French C, Shield C, Posbergh T. Considerations for the development of real-time dynamic testing using servo-hydraulic actuation. *Earthq Eng Struct Dyn* 2003;32:1773–94.

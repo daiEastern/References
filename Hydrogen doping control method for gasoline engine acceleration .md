@@ -1,0 +1,530 @@
+
+
+![CellPress logo](935eed7aa61f7777f62cfc032e11bee9_img.jpg)
+
+CellPress logo
+
+![Heliyon journal cover](390120de4fe440c42fea8154fcaad334_img.jpg)
+
+Heliyon journal cover
+
+## Research article
+
+# Hydrogen doping control method for gasoline engine acceleration transient air-fuel ratio
+
+![Check for updates button](6ed175c791b5e156d9c98a8dbcc3318c_img.jpg)
+
+Check for updates button
+
+Zuolei Hu<sup>a,\*</sup>, Yingjie Zhang<sup>a</sup>, Zhaoyang Ai<sup>b</sup>, Ming Li<sup>c</sup>, Ying Zhang<sup>d</sup><sup>a</sup> College of Information Science and Engineering, Hunan University, Changsha 410082, China<sup>b</sup> School of Foreign Languages, Hunan University, Changsha 410082, China<sup>c</sup> School of Information and Electrical Engineering, Hunan University of Science and Technology, XiangTan 411100, China<sup>d</sup> School of Computer Science, Northwestern Polytechnical University, Xi'an 710072, China
+
+## ARTICLE INFO
+
+## Index Terms:
+
+Automobile
+
+Air-fuel ratio
+
+LADRC
+
+Hydrogen-doping
+
+Energy-saving control
+
+## ABSTRACT
+
+One of the primary contributors to automobile exhaust pollution is the significant deviation between the actual and theoretical air-fuel ratios during transient conditions, leading to a decrease in the conversion efficiency of three-way catalytic converters. Therefore, it becomes imperative to enhance fuel economy, reduce pollutant emissions, and improve the accuracy of transient control over air-fuel ratio (AFR) in order to mitigate automobile exhaust pollution. In this study, we propose a Linear Active Disturbance Rejection Control (LADRC) Hydrogen Doping Compensation Controller (HDC) to achieve precise control over the acceleration transient AFR of gasoline engines. By analyzing the dynamic effects of oil film and its impact on AFR, we establish a dynamic effect model for oil film and utilize hydrogen's exceptional auxiliary combustion characteristics as compensation for fuel loss. Comparative experimental results demonstrate that our proposed algorithm can rapidly regulate the AFR close to its ideal value under three different transient conditions while exhibiting superior anti-interference capability and effectively enhancing fuel economy.
+
+## 1. Introduction
+
+### 1.1. Background and motivation
+
+The widespread utilization of automobiles has significantly contributed to both economic development and the improvement of people's daily lives. However, it has also given rise to issues such as excessive consumption of oil resources and an escalation in environmental pollution. Considering the escalating energy crisis, environmental concerns, and stricter emission regulations imposed by authorities worldwide, there is an urgent need to explore new clean alternative energy sources such as engine hydrogen doping control technology within the automotive engineering research area to address environmental pollution. The research on engine hydrogen energy utilization technology primarily focuses on the investigation of utilizing pure hydrogen as an engine fuel and exploring engine hydrogen doping techniques. Hydrogen, when used as a sole fuel for engines, exhibits characteristics such as environmentally benign (carbon-free) chemical generation, a wide flammability range, and high thermal efficiency. However, due to its low ignition energy, hydrogen is prone to premature combustion and unconventional combustion sensitivity, often resulting in
+
+\* Corresponding author.
+
+E-mail address: [huizuolei@hnu.edu.cn](mailto:huizuolei@hnu.edu.cn) (Z. Hu).
+
+elevated temperatures and increased NOx emissions [1]. At the same time, it is easy to cause engine premature ignition, backfire, deflagration, and other safety problems [2–4]. It seriously limits the development and application of pure hydrogen engines. The use of hydrogen as a combustion aid can reduce the safety issues of hydrogen fuel, while improving the combustion performance of conventional internal combustion engines and enhancing the efficiency of energy utilization [5]. In a gasoline engine, the AFR is a very important metric that affects engine emissions, power, and fuel economy. It is of great practical significance to control the AFR accurately around the theoretical value to save energy and reduce emission of gasoline engine. According to statistics, during the operation of a gasoline engine, transient conditions account for approximately 40 %–75 % of the conditions in the basic test cycle. Particularly in city driving, transient conditions can reach up to 50 %–80 %. When a gasoline engine operates under transient conditions, the dynamic effect of the oil film causes deviations in fuel quantity entering the cylinder from its target value. Consequently, this leads to deviations in controlling the AFR during transients and ultimately results in compromised emission performance of automobiles. The end outcome is a significant reduction in vehicle emission performance. The pollutants and fuel consumption generated by transient conditions account for 40 %–80 % of the total [6].
+
+The present study proposes a hydrogen doping compensation control strategy based on LADRC, which integrates the combustion characteristics of hydrogen and gasoline fuel. This strategy aims to address the challenge of increasing AFR during accelerated transient processes and achieve precise and rapid control of the hydrogen doping AFR for gasoline engines under such operational conditions.
+
+### 1.2. Related works about AFR and hydrogen-doped AFR
+
+The literature extensively investigates the application of various control techniques for regulating the AFR in gasoline engines, including feed-forward control, adaptive control [7], sliding mode control, neural networks [8], and fuzzy control. Feedforward control accomplishes the calculation of the basic injection volume by means of an accurate estimation of the cylinder intake [9,10]. Literature [11] presents a discrete, time-based, delay-compensated adaptive proportional-integral-derivative (PID) control algorithm for AFR control of SI engines. Literature [12] utilizes the principle of correlated error dynamics in conjunction with a variable parameter dynamic compensator to construct a filtered PID controller that utilizes feedback from a general-purpose exhaust gas oxygen sensor to track a desired AFR command.
+
+There are other types of similar control strategies for AFR control, such as fuzzy PID, adaptive control [13]. While fuzzy PID demonstrates capability for online parameter adjustment, it should be noted that formulating fuzzy rules and sets for complex nonlinear systems necessitates substantial iterative adjustments based on experimental data, making the entire process more intricate and time-consuming. Literature [14] proposed an AFR control method based on an adaptive state observer. The core of the method is to use oxygen sensors and throttle position sensors to observe the corresponding parameters and make real-time corrections to the oil film mass flow rate and air flow rate in order to meet the requirements of the system robustness, but it is difficult to track the changes of the system parameters in the fast-changing transient conditions, so it is difficult to satisfy the requirements of the control accuracy in the transient conditions.
+
+The study described in literature [15] utilizes Recurrent Neural Networks (RNNs) to estimate the air mass flow rate and intake manifold pressure of diesel engines, thereby enabling precise control over the AFR.
+
+The paper [16] accurately monitors the required Fuel-to-Air Ratio values under various operational conditions by establishing a predictive model and designing a feedback/feedforward predictive controller. Although PID control design is simple and easy to implement, parameter adjustment poses challenges. In different working conditions, parameter consistency is not high, requiring online correction of control parameters.
+
+In literature [17], the sliding mode controller is used to control the AFR, which can consider the engine performance in the presence of noise, interference, and parameter uncertainty. But the sliding mode control tends to induce system output jitter, impeding the efficient regulation of AFR. Literature [18] conducted control experiments on AFR using information fusion. Since the control method does not require an accurate model, The proposed method is highly suitable for nonlinear control systems, such as the AFR, and yields a more satisfactory control performance. The oxygen sensor delay phenomenon, oil film dynamic effect, and slow convergence speed of the neural network pose challenges in achieving the required AFR control accuracy when operating a gasoline engine under transient conditions.
+
+Pure hydrogen as an engine fuel can cause a sharp increase in NOx emissions due to high temperatures and is prone to premature engine ignition, backfiring, deflagration, and other safety issues, which severely limits the development and application of pure hydrogen engines [19,20]. However, blending hydrogen into engines as a combustion aid can reduce the safety concerns of hydrogen fuel, while improving the combustion performance of conventional internal combustion engines and enhancing fuel utilization. The literature [20] conducted experimental studies on high compression ratio, pressurized premixed natural gas engines with hydrogen doping and developed a mathematical model for predicting the performance parameters of natural gas engines doped with hydrogen. In a study [21], literature conducted hydrogen doping experiments in a ZS1100 single-cylinder engine and demonstrated that hydrogen doping can effectively reduce overall fuel consumption in a diesel engine at low loads. The engine hydrogen doping experiments in the literature [22] show that the addition of hydrogen reduces exhaust emissions and stabilizes the combustion process and performance of the diesel engine under excessive operating conditions. These studies have shown that hydrogen doping into conventional fuel engines can affect the combustion performance of the engine, and that the right amount of hydrogen doping can reduce overall fuel consumption and minimize exhaust emissions.
+
+In addition, the supply method of hydrogen also plays an important role in the comprehensive performance improvement of the engine. Literature [23] modified the natural intake method of the ZS1100 m engine into the intake pipe intermittent injection method
+
+to control the hydrogen intake of the engine; or control the amount of hydrogen entry by controlling the injection pulse width [24]. Literature [25] used genetic algorithm for multi-objective optimization analysis of diesel engine to study the effect of different intake advance angle, intake late closing angle and other factors on the performance of diesel engine.
+
+The above studies were conducted to influence the engine performance by changing the hydrogen doping ratio and air intake method. However, it is not enough to analyze the effect of hydrogen doping on engine performance and energy efficiency purely from the perspective of combustion. Literature [26] based on Pareto's genetic algorithm for multi-objective optimization of the performance parameters of a single-cylinder diesel engine with hydrogen as a dual fuel; literature [27] applied the auxiliary multi-objective particle swarm optimization (MOPSO) algorithm with artificial neural network constructing a meta-model to the problem of balancing the exhaust emissions of the hydrogen and diesel dual-fuel engines with the performance of the engine. Literature [28] investigated the performance characteristics of a single-cylinder four-stroke compression-ignition engine utilizing hydrogen as an alternative fuel in dual-fuel mode. Experimental findings demonstrated that, under various load conditions, the introduction of a predetermined flow rate of hydrogen intake effectively enhanced the brake thermal efficiency in dual-fuel mode. However, the above studies did not carry out accurate modeling of the system and stability analysis of the control system, and the uncertainty and external perturbation of the system will seriously affect the control effect of the system.
+
+In summary, the current hydrogen doping technology for engines primarily focuses on optimizing fuel combustion, including the hydrogen doping ratio and supply mode, as well as enhancing engine performance and reducing exhaust emissions. The majority of hydrogen doping control is achieved through open-loop control, with limited research conducted on the AFR during transient engine conditions.
+
+After conducting an analysis, it can be observed that the exploration of AFR primarily focuses on steady-state engine operation. However, for gasoline engines operating under non-steady state conditions, significant progress in overcoming current challenges has yet to be achieved due to the influence of dynamic oil film effects. As environmental pollution continues to escalate, stricter demands are being placed on automobile exhaust emission performance. Based on this, this paper simplifies the modeling process on the basis of previous research, and establishes the calculation model of intake volume with the inputs of intake manifold pressure, intake manifold temperature, and intake and exhaust phases through theoretical analysis and data fitting, which is used to establish the computational model for the control of the AFR; and then, the calculation model for hydrogen-doped AFR is designed on the basis of the traditional definition of the AFR. Then, based on the definition of traditional AFR, a hydrogen-doped AFR calculation method is designed and converted into hydrogen-doped excess air coefficient, and a linear self-immunity-based hydrogen-doped AFR control algorithm is constructed to realize the accurate control of the AFR under the accelerated transient operating conditions.
+
+### 1.3. Control problem in acceleration transient process
+
+The driver promptly increases the throttle opening when the gasoline engine is in the acceleration transient condition. At this time, air rapidly enters the intake tract and fully mixes with injected fuel for combustion in the cylinder. However, the fuel mass in the mixture is much larger than that of the air, resulting in a correspondingly larger inertia. As a result, it becomes more difficult to change the state of motion of the fuel compared to that of the air, leading to the phenomenon of separation between air and fuel. Most of the fuel mixes with the air and enters the cylinder to participate in combustion, while the remaining fuel is deposited on the walls of the intake tract and surfaces of the intake valve, forming an oil film. The actual quantity of gasoline injected into the cylinder is less than the target value calculated by the engine control unit (ECU). At the same time, due to the high temperature of the wall and intake valve, there will be a certain rate of evaporation and gasification of the oil film on the wall, which then mixes with air and enters the cylinder. This process is known as dynamic oil film generation in gasoline engines. The oil film effect also occurs during deceleration transient conditions in gasoline engines.
+
+Assume that the total flow of fuel injected into the intake tract is  $\dot{m}_{fi}$ , a portion of the fuel is deposited on the walls of the intake tract and intake valve to form an oil film. Sedimentation as a proportion of total flow is  $X$  ( $X$  is the deposition coefficient, which varies nonlinearly). This gives the amount of fuel deposited as  $X \cdot \dot{m}_{fi}$ . The remaining fuel,  $(1 - X) \cdot \dot{m}_{fi}$ , enters the cylinder with the air in the form of oil vapor and participates in combustion. At the same time the fuel deposited on the walls is continuously evaporated to the cylinder, and the amount of gasoline evaporated is  $(1/\tau) \cdot \dot{m}_f$  ( $\tau$  is the oil film evaporation time constant, which varies nonlinearly). Then the total amount of gasoline injected into the cylinder,  $\dot{m}_{fcyl}$ , is the sum of the amount entering the cylinder directly and the amount evaporated. The oil film model expression is Eqs. (1)–(3)
+
+$$\dot{m}_f = -\frac{1}{\tau} \dot{m}_f + X \dot{m}_{fi} \quad (1)$$
+
+$$\dot{m}_{fv} = (1 - X) \dot{m}_{fi} \quad (2)$$
+
+$$\dot{m}_{fcyl} = \dot{m}_{fv} + \frac{1}{\tau} \dot{m}_f \quad (3)$$
+
+where  $\dot{m}_{fv}$  represents the evaporative vaporization of fuel (g/s),  $\dot{m}_{fcyl}$  represents the total fuel flow injected into the cylinder (g/s),  $\dot{m}_{fi}$  represents the injection flow rate through the injector (g/s),  $\dot{m}_f$  is the mass of the oil film attached to the wall (g),  $\dot{m}_f$  denotes the rate of evaporation of fuel oil from the attached wall (g/s). The process of oil film generation is shown in Fig. 1.
+
+Through analysis, it can be seen that whether reaching the target value for fuel intake into the cylinder primarily depends on both
+
+![Flowchart illustrating the process of oil film generation. Fuel Injection Mass Flow m_f enters a junction. One path leads to 'Direct-to-cylinder fuel quality (1-X) * m_f'. The other path leads to 'Oil-film quality X * m_f', which then leads to 'Oil-film evaporation quality m_f / tau'. The outputs of the first two boxes are summed to produce the 'Actual Fuel Mass Flow to Cylinder m_fot'.](9e6062272bbe3ddbb7c0606721d64cf0_img.jpg)
+
+```
+
+graph LR
+    m_f[Fuel Injection Mass Flow m_f] --> J1(( ))
+    J1 --> DTC[Direct-to-cylinder fuel quality (1-X) * m_f]
+    J1 --> OFQ[Oil-film quality X * m_f]
+    OFQ --> OFE[Oil-film evaporation quality m_f / tau]
+    DTC --> Sum((+))
+    OFE --> Sum
+    Sum --> m_fot[Actual Fuel Mass Flow to Cylinder m_fot]
+  
+```
+
+Flowchart illustrating the process of oil film generation. Fuel Injection Mass Flow m\_f enters a junction. One path leads to 'Direct-to-cylinder fuel quality (1-X) \* m\_f'. The other path leads to 'Oil-film quality X \* m\_f', which then leads to 'Oil-film evaporation quality m\_f / tau'. The outputs of the first two boxes are summed to produce the 'Actual Fuel Mass Flow to Cylinder m\_fot'.
+
+Fig. 1. The process of oil film generation.
+
+fuel deposition and evaporation within an oil film. In a steady state operation of a gasoline engine, there exists an approximate balance between deposited and evaporated fuels with respect to actual intake into cylinders. Moreover, when ECU's targeted fuel injection volume matches with maintaining theoretical AFR values, normal performance indicators are achieved. However, when the gasoline engine operates under accelerated transient conditions, the dynamic balance of the oil film is disrupted, leading to an increase in fuel deposition and a decrease in oil film evaporation, resulting in a thinner cylinder mixture. As a result, the AFR instantly increases, leading to a decline in both emissions and dynamics of the gasoline engine. To enhance the emission, dynamics, and fuel efficiency of the gasoline engine during accelerated transient conditions, it is necessary to control the AFR within the optimal operating range of the three-way catalytic converter. This range is close to the theoretical value of 14.6. Therefore, dynamic oil film compensation control should be implemented to eliminate any deviation caused by oil film effects on AFR control.
+
+### 1.4. Innovations, contributions and organization
+
+The objective of this paper is to develop a control strategy for oil-film compensation in gasoline engines, with the aim of minimizing energy consumption during the start-up process. To achieve this goal, this study primarily focuses on devising an efficient method for calculating the dynamic compensated mass flow rate of gasoline. The key innovations and contributions of this research can be summarized as follows:
+
+- A novel energy-saving control strategy is initiated by focusing on the startup process of a gasoline engine. To achieve this, hydrogen is utilized to compensate for fuel loss caused by the dynamic effect of the oil film, leveraging its exceptional combustion characteristics.
+- The fuel loss was dynamically calculated using LADRC and then converted into the corresponding amount of hydrogen doping.
+- The control strategy proposed in this paper demonstrates outstanding performance and effectively offers potential applications for reducing energy consumption during startup in other heavy-duty delivery vehicles.
+
+This paper is structured as follows: Section II presents the development of a dynamics model for the intake system, while Section III introduces the implementation of the LADRC. In Section IV, an HDC control algorithm is applied to the startup process of a gasoline engine. Lastly, Section V conducts a simulation using an Engine thermodynamic simulation model and performs detailed analysis by comparing it with Fault-tolerant control (FTC), PID, genetic algorithm-PID (GA-PID).
+
+## 2. Dynamics modeling of intake system
+
+The air intake system plays a critical role in gasoline engines. Due to the pulsating effect of the intake process, there are significant variations in airflow and pressure distribution at the throttle position and inside the intake pipe. Therefore, it is more practical to divide the intake system model into a sub-model for throttle body and another sub-model for intake manifold [19]. Based on the relationship between various quantities in the mean model, throttle air flow is determined by both throttle opening and intake pressure, which can be represented by a specific equation as shown in Eq. (4).
+
+$$\dot{m}_{at}(\alpha, p_i) = m_{at1} \frac{p_a}{\sqrt{T_a}} \beta_1(\alpha) \beta_2(p_r) + m_{at0} \quad (4)$$
+
+where  $\dot{m}_{at}$ ,  $\alpha$ ,  $p_i$ ,  $p_a$ ,  $T_a$  represents the air mass flow rate at the throttle valve, the throttle angle, the absolute pressure in the intake manifold, ambient pressure and ambient temperature, respectively.  $m_{at0}$ ,  $m_{at1}$  are constants.  $\beta_1(\alpha)$  stands for the empirical formula on throttle angle, which can be expressed as shown in Eq. (5).
+
+$$\beta_1(\alpha) = 1 - \cos(\alpha) - \frac{\alpha_a^2}{2!} \quad (5)$$
+
+$\beta_2(p_r)$  can be expressed as shown in Eq. (6).
+
+$$\beta_2(p_r) = \sqrt{1 - \left( \frac{p_r - p_c}{1 - p_c} \right)^2}, \quad p_r \ge p_c \quad (6)$$
+
+where  $p_c$  is a constant,  $p_r = \frac{p_i}{p_a}$
+
+The air intake system is equivalent to an adiabatic system, and the air intake process can be expressed by Eq. (7).
+
+$$\dot{p}_i = \frac{kT_i}{V_i} (\dot{m}_{at}T_a - \dot{m}_{ap}T_i + \dot{m}_{EGR}T_{EGR}) \quad (7)$$
+
+where  $\dot{p}_i$ ,  $k$ ,  $T_i$ ,  $V_i$ ,  $\dot{m}_{ap}$ ,  $\dot{m}_{EGR}$ ,  $T_{EGR}$  are the rate of change of inlet pipe pressure, specific heat capacity, temperature of the gas in the intake pipe, the volume of the inlet pipe, the final intake cylinder air flow, Air flow at the location of the exhaust gas recirculation system and Exhaust gas temperature at the location of the exhaust gas recirculation system, respectively.
+
+$\dot{m}_{ap}$  can be expressed by Eq. (8).
+
+$$\dot{m}_{ap}(n, p_i) = \frac{V_d}{120RT_i} (\eta_v \cdot p_i) n \quad (8)$$
+
+where,  $V_d$ ,  $\eta_v$  represent the cylinder volume and filling efficiency, respectively.  $R$  is a constant. Where,  $\eta_v \cdot p_i$  can be expressed by Eq. (9).
+
+$$\eta_v \cdot p_i = s_i(n)p_i + y_i(n) \quad (9)$$
+
+where,  $s_i(n)$  and  $y_i(n)$  are just functions of the speed of the gasoline engine, and  $s_i \gg y_i$ . Bringing (1.5) and (1.6) to (1.4) gives the rate of change of temperature of the air entering the cylinder  $\dot{T}_i$  as shown in Eq. (10).
+
+$$\begin{aligned} \dot{T}_i = & \frac{RT_i}{p_i V_i} \left( -\dot{m}_{ap}(k-1)T_i + \dot{m}_{at}(kT_a - T_i) \right. \\ & \left. + \dot{m}_{EGR}(kT_{EGR} - T_i) \right) \end{aligned} \quad (10)$$
+
+## 3. Implementation method for LADRC
+
+The utilization of nonlinear functions in the three components of ADRC presents challenges in efficiently and effectively achieving the control objective due to increased complexity and regulatory parameters involved. Through numerous simulation experiments, researchers have discovered that employing a linear function can also yield excellent controller performance while significantly reducing parameterization calculations, making it more suitable for engineering applications. The fundamental concept is to linearize the expanded state observer and establish its parameters' relationship with the observer bandwidth to simplify the design process. Additionally, a simple proportional-integral combination is utilized to relate proportionality coefficients, differential time constants, and controller bandwidths for simplified controller tuning. The LADRC algorithm is described as follows.
+
+For an  $n$ -order system:
+
+$$y^{(n)} = -a_{n-1}y^{(n-1)} - a_{n-2}y^{(n-2)} - \dots - a_1\dot{y} - a_0y + \omega + bu \quad (11)$$
+
+where  $y$ ,  $u$  are the outputs and inputs, respectively.  $\omega$  is a perturbation.  $a_0, a_1, \dots, a_{n-1}$  are structural parameters of the object, which may be partially unknown;  $b$  is partially known (the known part is denoted  $b_0$ ), Eq. (11) can be written as Eq. (12).
+
+$$y^{(n)} = -a_{n-1}y^{(n-1)} - a_{n-2}y^{(n-2)} - \dots - a_1\dot{y} - a_0y + \omega + (b - b_0)u + b_0u = f + b_0u \quad (12)$$
+
+where,
+
+$$f = -a_{n-1}y^{(n-1)} - a_{n-2}y^{(n-2)} - \dots - a_1\dot{y} - a_0y + \omega + (b - b_0)u \quad (13)$$
+
+In Eq. (13),  $f$  represents the total perturbation, which includes both external and internal perturbations, for a system with unknown structural parameters of the object. For systems in which the structural parameters of the object are known or partially known, it is a quantity that contains a combination of information about the object and unknown perturbations.
+
+Expanding the perturbation  $f$  into the  $(n+1)$ th state variable of the system, Eq. (11) is transformed into a continuous  $(n+1)$ -order expanded state space, described as Eq. (14).
+
+$$\begin{cases} \dot{x} = Ax + Bu + Ef \\ y = Cx \end{cases} \quad (14)$$
+
+where, for the system without object model, the state matrix and input matrix are:
+
+$$A = \begin{bmatrix} 0 & 1 & 0 & \dots & 0 \\ 0 & 0 & 1 & \dots & 0 \\ 0 & 0 & 0 & \ddots & \vdots \\ \vdots & \vdots & \vdots & \ddots & 1 \\ 0 & 0 & 0 & \dots & 0 \end{bmatrix}_{(n+1) \times (n+1)}, B = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ b_0 \\ 0 \end{bmatrix}_{(n+1) \times 1} \quad (15)$$
+
+![Figure 2: The simplified basic structure of LADRC. The diagram shows a control loop. A 'reference signal' enters a 'PD controllers' block. The output of the PD controller is u_0. This signal u_0 is compared with z_{n+1} in a summing junction. The output of this junction is multiplied by 1/b_0. The resulting control signal u is sent to a 'Plant' block. The output of the plant is y. A 'Linear expansion of state observers' block takes y as input and outputs z_1, z_2, ..., z_n, and z_{n+1}. These observer states are fed back into the PD controller and the summing junction.](a7d78d22e465dea388b31d0739f9d0cd_img.jpg)
+
+Figure 2: The simplified basic structure of LADRC. The diagram shows a control loop. A 'reference signal' enters a 'PD controllers' block. The output of the PD controller is u\_0. This signal u\_0 is compared with z\_{n+1} in a summing junction. The output of this junction is multiplied by 1/b\_0. The resulting control signal u is sent to a 'Plant' block. The output of the plant is y. A 'Linear expansion of state observers' block takes y as input and outputs z\_1, z\_2, ..., z\_n, and z\_{n+1}. These observer states are fed back into the PD controller and the summing junction.
+
+Fig. 2. The simplified basic structure of LADRC.
+
+For a system whose objects are partially known, without loss of generality, the state matrix and the input matrix can be expressed as follows, respectively.
+
+$$A = \begin{bmatrix} 0 & 1 & 0 & \dots & 0 \\ 0 & 0 & 1 & \dots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & -a_0 & -a_1 & \dots & -a_{n-1} \end{bmatrix}_{(n+1) \times (n+1)}, B = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ b_0 \\ -a_{n-1}b_0 \end{bmatrix}_{(n+1) \times 1} \quad (16)$$
+
+And the perturbation transfer matrix and output matrix (with or without a known object model) are shown in Eq. (17) as follows.
+
+$$E = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 1 \end{bmatrix}_{(n+1) \times 1}, C = [1 \ 0 \ 0 \ \dots \ 0]_{1 \times (n+1)} \quad (17)$$
+
+The full-order dilation observer state equation of Eq. (11) is given by Eq. (18).
+
+$$\begin{cases} \dot{z} = Az + Bu + L(y - Cz) \\ \hat{y} = Cz \end{cases} \quad (18)$$
+
+where, depending on the known model information, A, B, and C take the same values as Eq. (15)-(17), respectively.  $L = [l_1 \ l_2 \ \dots \ l_{n+1}]^T$ , expresses the observer characteristic polynomial as Eq. (19).
+
+$$s^{n+1} + l_1 s^n + \dots + l_n s + l_{n+1} = (s + \omega_o)^{n+1} \quad (19)$$
+
+Then the value of  $l_i$  can be taken as Eq. (20).
+
+$$l_i = \frac{(n+1)!}{i!(n+1-i)!}, 1 \le i \le n+1 \quad (20)$$
+
+The controller is a linear PD combination, and for the design under full-order LESO, the controller is shaped as Eq. (21)
+
+$$u_0 = k_p(r - z_1) - k_{d_1}z_2 - \dots - k_{d_{n-1}}z_n \quad (21)$$
+
+where,  $r$  is the given value,  $z_1, z_2, \dots, z_n$  comes to the observer state, and  $k_p, k_{d_1}, \dots, k_{d_{n-1}}$  is the parameter of the controller gain matrix  $K = [k_{d_{n-1}} \ \dots \ k_{d_1} \ k_p]^T$  to be designed. By parameterization, the characteristic polynomial of the closed-loop system can be given as Eq. (22).
+
+$$s^n + k_{d_{n-1}}s^{n-1} + \dots + k_{d_1}s + k_p = (s + \omega_c)^{n+1} \quad (22)$$
+
+The controller gain matrix  $K$  can be obtained, and the control signal  $u$  is shown in Eq. (23).
+
+$$u = \frac{u_0 - z_{n+1}}{b_0} \quad (23)$$
+
+The simplified basic structure of LADRC is shown in Fig. 2.
+
+## 4. Algorithm for hydrogen doping compensation control strategy
+
+### 4.1. Construction of AFR control calculation model
+
+The calculation model for AFR control, illustrated in Fig. 3, is based on the simplified intake model. The main purpose of the intake model is to determine the initial fuel injection quantity and offer feedback regarding the AFR.
+
+In this paper, the equivalent AFR can be expressed as Eq. (24).
+
+![Block diagram of the AFR control calculation model. The diagram shows a flow from 'throttle position' and 'engine speed' to a 'Throttle' block, which then feeds into the 'Intake Manifold'. 'Fuel' enters an 'Oil-film model' block, which then feeds into 'Fuel Injection'. 'Air Entering the Cylinder' and 'Fuel Entering the Cylinder' both feed into the 'Engine cylinder' block. The 'Engine cylinder' block feeds into an 'Air-Fuel Ratio Calculator'. The 'Air-Fuel Ratio Calculator' feeds back into a 'Hydrogen-doped air-fuel ratio control module'. This module also receives input from a 'Reference Theoretical Hydrogen Doping Air-Fuel Ratio' block. The 'Hydrogen-doped air-fuel ratio control module' feeds into a 'Calculation of hydrogen doping' block, which then feeds into 'Hydrogen Injection'. The 'Hydrogen Injection' block feeds back into the 'Fuel Injection' block. There are also feedback loops from the 'Air-Fuel Ratio Calculator' to the 'Hydrogen-doped air-fuel ratio control module' and from the 'Hydrogen-doped air-fuel ratio control module' to the 'Air-Fuel Ratio Calculator'.](a738993919a50143787084ee7ce6e2f2_img.jpg)
+
+Block diagram of the AFR control calculation model. The diagram shows a flow from 'throttle position' and 'engine speed' to a 'Throttle' block, which then feeds into the 'Intake Manifold'. 'Fuel' enters an 'Oil-film model' block, which then feeds into 'Fuel Injection'. 'Air Entering the Cylinder' and 'Fuel Entering the Cylinder' both feed into the 'Engine cylinder' block. The 'Engine cylinder' block feeds into an 'Air-Fuel Ratio Calculator'. The 'Air-Fuel Ratio Calculator' feeds back into a 'Hydrogen-doped air-fuel ratio control module'. This module also receives input from a 'Reference Theoretical Hydrogen Doping Air-Fuel Ratio' block. The 'Hydrogen-doped air-fuel ratio control module' feeds into a 'Calculation of hydrogen doping' block, which then feeds into 'Hydrogen Injection'. The 'Hydrogen Injection' block feeds back into the 'Fuel Injection' block. There are also feedback loops from the 'Air-Fuel Ratio Calculator' to the 'Hydrogen-doped air-fuel ratio control module' and from the 'Hydrogen-doped air-fuel ratio control module' to the 'Air-Fuel Ratio Calculator'.
+
+Fig. 3. The AFR control calculation model.
+
+$$\lambda = \frac{m_{f1} + m_{f2}}{m_{ap}} \cdot 14.6 \quad (24)$$
+
+$m_{f1}$ ,  $m_{f2}$ ,  $m_{f1} + m_{f2}$ ,  $m_{ap}$  and  $\lambda$  are the basic injection quantity calculated according to the theoretical AFR, the injection compensation quantity obtained by feedback control, the final amount of circulating fuel supply involved in the combustion, the air intake into the cylinder, and the equivalent AFR, respectively. The derivative can be obtained by Eq. (25).
+
+$$\dot{\lambda} = \left( \frac{\dot{m}_{f1} + \dot{m}_{f2}}{m_{ap}} - \frac{\dot{m}_{ap} \cdot (m_{f1} + m_{f2})}{m_{ap}^2} \right) \cdot 14.6 \quad (25)$$
+
+By simplifying:
+
+$$\dot{\lambda} = (\dot{m}_{f1} + \dot{m}_{f2}) \cdot \frac{14.6}{m_{ap}} - \frac{\dot{m}_{ap}}{m_{ap}} \cdot \frac{(m_{f1} + m_{f2})}{m_{ap}} \cdot 14.6 \quad (26)$$
+
+There  $\dot{m}_{ap}/m_{ap}$  in Eq. (26) represents the engine cycle time. For a four-stroke engine, the value is  $120/n$ ;  $\dot{m}_{ap}/14.6$  is the basic fuel injection mass flow;  $(m_{f1} + m_{f2}) \cdot 14.6/m_{ap}$  is the equivalent AFR  $\lambda$  defined in this paper. Then (1.3) can be further simplified as Eq. (27).
+
+$$\dot{\lambda} = \frac{\dot{m}_{ap}}{m_{ap}} \cdot 14.6 - \frac{\dot{m}_{f2}}{m_{ap}} \cdot 14.6 - \frac{n}{120} \cdot \lambda \quad (27)$$
+
+The given equation represents the dynamic model for AFR control, with  $\dot{m}_{f2}$  denoting the compensatory fuel injection flow. In accordance with the concept of an extended state observer, Equation (28) is formulated.
+
+$$\begin{aligned} \dot{\lambda} &= a \cdot \lambda + b \cdot \dot{m}_{f2} + w + \frac{n}{120} \\ &= a \cdot \lambda + (b - b_0) \cdot \dot{m}_{f2} + w + b_0 \cdot \dot{m}_{f2} + \frac{n}{120} \end{aligned} \quad (28)$$
+
+$$\begin{cases} \dot{\lambda} = f + b_0 \cdot \dot{m}_{f2} \\ y = \varphi \end{cases} \quad (29)$$
+
+Where:  $f$  represents the overall system disturbance, denoted as  $a \cdot \lambda + (b - b_0) \cdot \dot{m}_{f2} + w + n/120$ ,  $w$  which refers to the external disturbances not accounted for in the model. Eq. (29) can be written as the state space Eq. (30).
+
+$$\begin{cases} \begin{bmatrix} \dot{\lambda} \\ \dot{f} \end{bmatrix} = A \begin{bmatrix} \lambda \\ f \end{bmatrix} + B \dot{m}_{f2} + E h \\ y = \lambda \end{cases} \quad (30)$$
+
+where:
+
+$$A = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}, B = \begin{bmatrix} b_0 \\ 0 \end{bmatrix}, E = \begin{bmatrix} 0 \\ 1 \end{bmatrix}.$$
+
+According to this, the extended state observer formulated in this study can be represented by Equation (31).
+
+$$\begin{cases} \dot{\hat{z}} = A \hat{z} + Bu + L(y - \hat{y}) \hat{y} = \hat{c} \hat{z} \end{cases} \quad (31)$$
+
+To facilitate modeling, rewrite as Eq. (32).
+
+$$\begin{cases} \dot{\hat{z}}_1 = \hat{z}_2 + b_0 u + \beta_1 (z_1 - \hat{z}_1) \hat{z}_2 = \beta_2 (z_1 - \hat{z}_1) \hat{y} = \hat{z}_1 \end{cases} \quad (32)$$
+
+The observer's coefficient is represented by  $L = (\beta_1, \beta_2)$ , while the calculated equivalent air-fuel ratio (AFR) is denoted as  $z_1 = \lambda$ .
+
+**Table 1**  
+Working condition of engine.
+
+| Working Condition | Throttle (%) | Speed (rad/s) |
+|-------------------|--------------|---------------|
+| 1                 | 10-30        | 300           |
+| 2                 | 10-30-10     | 300           |
+| 3                 | 20           | 300-500       |
+
+$\hat{z}_1 = \hat{\lambda}$  refers to the estimated equivalent AFR.
+
+In this paper, we propose the utilization of PD control as a substitute for the nonlinear error feedback control rate. The controller is formulated as Eq. (33) and Eq. (34), where  $u = \dot{m}_{f2}$  represents the fuel injection compensation of the control system, while  $\hat{z}_2 = \hat{f}$  denotes the observation value of the expansion state, i.e., the system disturbance.
+
+$$u = \dot{m}_{f2} = \frac{-\hat{f} + u_0}{b_0} \quad (33)$$
+
+$$u_0 = k_p(r - \lambda) \quad (34)$$
+
+$k_p$ ,  $\beta_1$ ,  $\beta_2$  and  $b_0$  are parameters with adjustment. The parameter setting results in this paper are as follows:  $k_p = 5$ ,  $\omega_0 = 60$ ,  $\beta_1 = 2\omega_0 = 120$ ,  $\beta_2 = \omega_0^2 = 3600$ ,  $b_0 = 1.5$ .
+
+The control volume obtained from LADRC represents the amount of gasoline that requires compensation due to dynamic effects caused by the oil film. This compensation is accomplished by substituting hydrogen for lost gasoline. Throughout this process, there are no changes in air consumption within the mixture. By utilizing this relationship, we convert the lost volume of gasoline into an equivalent dose of hydrogen to maintain an in-cylinder AFR or excess air factor  $\gamma$  as close to 1 as possible.
+
+The amount of hydrogen to be compensated is determined by the value of the relationship between gasoline and hydrogen consumption of the same mass of air and the value of the proportion of each component in the air (the ratio of air components is nitrogen: oxygen: carbon dioxide and other rare gases = 78:21:1). Let the amount of gasoline lost by the dynamic effect of the oil film be  $\Delta m$ , then  $\Delta m = u = \dot{m}_{f2}$ .
+
+According to the stoichiometric ratio of gasoline, the complete combustion of a mass  $\Delta m$  of gasoline requires an air-to-fuel ratio of 14.6. Considering that oxygen constitutes approximately 21 % of the air composition, the corresponding amount of oxygen consumed for compensating gasoline can be calculated as Eq. (35).
+
+$$0.21 \times 14.6 \Delta m = 3.07 \Delta m \quad (35)$$
+
+![](e4a63568c613e6b509936be7a284a78f_img.jpg)
+
+$$2H_2 + O_2 = 2H_2O \quad (36)$$
+
+From Eq. (36) the amount of hydrogen to be burned to consume 3.07  $\Delta m$  of oxygen is calculated as 0.38  $\Delta m$ . Then the theoretical hydrogen doping AFR is shown in Eq. (37).
+
+$$AFR_{H_2} = \frac{m_{air}}{m_{fuel} + m_{H_2}} \quad (37)$$
+
+The corresponding hydrogen-doped excess air coefficients  $\gamma$  is as Eq. (38).
+
+$$\gamma = \frac{m_{ap}}{m_{f1}AFR_{gasoline} + m_{H_2}AFR_{H_2}} \quad (38)$$
+
+$AFR_{gasoline}$  indicates the theoretical AFR of gasoline,  $AFR_{H_2}$  represents the theoretical AFR of hydrogen. They can be derived from the models of inlet manifold air dynamics, oil film evaporation and dynamic oil film, as well as the calculation module for hydrogen doping compensation.
+
+## 5. Simulation and analysis
+
+The GT-POWER thermodynamic numerical model is employed to validate the algorithm proposed in this paper, and three distinct transient operating conditions are simulated as indicated in Table 1. Additionally, the corresponding structural parameters are presented in Table 2.
+
+Condition 1 is that the throttle opening is kept constant, but the engine speed is changed from 300 rad/s to 500 rad/s. Working condition design is shown in Fig. 4(a) and (b). Result of the experiment is shown in Fig. 4(c).
+
+Fig. 4(c) shows hydrogen-doping controller enables the AFR to quickly return to a steady state in the event of a sudden change in the engine speed.
+
+Condition 2 is a periodic variation of the throttle signal from 10 % to 30 % and the engine speed is maintained at 300 rad/s. Working condition design is shown in Fig. 5(a) and (b). Experimental results are shown in Fig. 5(c).
+
+As can be seen in Fig. 5(c) the controller enables the engine to reach a steady state the fastest during the start-up phase, and the
+
+**Table 2**  
+Engine structure parameters.
+
+| Name                       | Performance parameters               |
+|----------------------------|--------------------------------------|
+| Bore (mm)                  | 76                                   |
+| Journey (mm)               | 82.6                                 |
+| Compression ratio          | 10                                   |
+| Displacement(L)            | 1.49                                 |
+| Connecting rod length (mm) | 133.2                                |
+| Fuel injection             | In cylinder direct injection         |
+| Gas distribution type      | Variable intake/exhaust valve timing |
+| Maximum power (kW)         | 121/(575.92 (rad/s))                 |
+| Maximum Torque (N · m)     | 250/(209.42–471.20 (rad/s))          |
+
+![Figure 4: Engine working condition 1. (a) Throttle opening vs Time(s). (b) Engine speed vs Time(s). (c) Experimental results of working condition 1 showing AFR (gamma) vs Time(s) for four controllers: PID, HDC, GA-PID, and FTC.](891ff9b651838b7f59e9a1612a739e15_img.jpg)
+
+Figure 4 consists of three subplots. Subplot (a) shows Throttle(%) on the y-axis (0 to 30) versus Time(s) on the x-axis (0 to 10). The throttle is constant at 20%. Subplot (b) shows Speed(rad/s) on the y-axis (300 to 500) versus Time(s) on the x-axis (0 to 10). The speed is constant at 300 rad/s until 7s, then jumps to 500 rad/s and remains there. Subplot (c) shows AFR ( $\gamma$ ) on the y-axis (0 to 1.5) versus Time(s) on the x-axis (0 to 10). It compares four controllers: PID (blue), HDC (red), GA-PID (green), and FTC (magenta). The FTC controller (magenta) shows the fastest recovery to a steady-state AFR of 1.0 after a disturbance at 7s. A zoomed-in inset shows the transient response between 6.4s and 8s.
+
+Figure 4: Engine working condition 1. (a) Throttle opening vs Time(s). (b) Engine speed vs Time(s). (c) Experimental results of working condition 1 showing AFR (gamma) vs Time(s) for four controllers: PID, HDC, GA-PID, and FTC.
+
+**Fig. 4.** Engine working condition 1. (a) Throttle opening. (b) Engine speed. (c) Experimental results of working condition 1.
+
+hydrogen doping control is able to quickly return to a steady state when the engine increases the throttle opening.
+
+Condition 3 is a sudden change in throttle from 10 % to 30 % at 4 s, with engine speed maintained at 300 rad/s. Working condition design is shown in Fig. 6(a) and (b). Experimental results are shown in Fig. 6(c).
+
+Fig. 6(c) shows the comparison of AFR control results of four controllers. It can be seen from the figure that the hydrogen-doping controller has the smallest steady-state error during the startup phase, when the engine reaches the steady state and then suddenly increases the throttle opening, the hydrogen doping control is able to recover to the steady state faster. Whereas the conventional fault tolerant control is no longer able to return to steady state.
+
+From the comparison of the data in Table 3, it is easy to conclude that the gasoline engine has a better AFR control effect with the proposed hydrogen-doped combustion controller, and the average error is minimized under the three experimental conditions, and the AFR does not exceed 1.00. In summary, the hydrogen-doped self-resistant control algorithm has a higher transient AFR control accuracy and good stability.
+
+To compare the dynamic performance and the energy consumption with the different control strategies in detail, the performance indexes of the fuel consumption economy  $F$  are used to conduct a comparative analysis during the start-up process, and the results are shown in Figs. 7–9. There fuel consumption economy is calculated as:
+
+![Figure 5: Engine working condition 2. (a) Throttle opening. (b) Engine speed. (c) Experimental results of working condition 3.](7801d00a216dc4dc8a7d210dcb5fe3c5_img.jpg)
+
+Figure 5 consists of three subplots. Subplot (a) shows Throttle opening (%) versus Time (s) from 0 to 10. The throttle follows a triangular wave pattern, starting at 10% at t=0, rising to 30% at t=2, falling to 10% at t=4, rising to 30% at t=6, falling to 10% at t=8, and rising to 30% at t=10. Subplot (b) shows Engine speed (rad/s) versus Time (s) from 0 to 10. The speed is constant at 300 rad/s. Subplot (c) shows the experimental results of working condition 3, plotting a variable γ versus Time (s) from 0 to 10. Four curves are shown: FTC (blue), GA-PID (magenta), PID (green), and HDC (red). All curves start at γ=0 at t=0 and rise to a steady-state value of approximately 1.0. The HDC curve (red) reaches this steady state most rapidly, followed by GA-PID (magenta), PID (green), and FTC (blue). The FTC curve exhibits a significant overshoot and oscillation around t=6s before settling.
+
+Figure 5: Engine working condition 2. (a) Throttle opening. (b) Engine speed. (c) Experimental results of working condition 3.
+
+Fig. 5. Engine working condition 2. (a) Throttle opening. (b) Engine speed. (c) Experimental results of working condition 3.
+
+$$F = \int_{0}^{t_e} (\dot{m}_{fuel} \cdot p_f + \dot{m}_{H_2} \cdot p_h) dt \quad (39)$$
+
+There  $p_f$  and  $p_h$  are the price per kilogram of gasoline and per kilogram of hydrogen, respectively.
+
+The results in Figs. 7–9 reflect the fuel consumption economy during the start-up process according to Eq. (39).
+
+The expenditure on FTC, PID, GA-PID, and HDC in Fig. 7 amounts to 1.55 ¥, 0.62 ¥, 0.76 ¥, and 0.61 ¥ respectively.
+
+The expenditure on FTC, PID, GA-PID, and HDC in Fig. 8 amounts to 2.50 ¥, 1.79 ¥, 1.51 ¥, and 1.32 ¥ respectively.
+
+The expenditure for FTC, PID, GA-PID, and HDC in Fig. 9 amounts to 2.351 ¥, 0.7941 ¥, 1.2193 ¥, and 0.6667 ¥ respectively. It is evident that the HDC strategy outperforms the other strategies across all three operational conditions.
+
+## 6. Conclusion
+
+The AFR plays a crucial role in determining vehicle exhaust emissions and achieving precise control of this ratio remains a prominent research challenge in the automotive industry. Currently, electronic fuel injection is utilized for fuel regulation in vehicles, which is complemented by catalytic converters for exhaust treatment. Under stable operating conditions, the AFR can be effectively controlled within the optimal working range of the catalytic converter. However, during transient acceleration scenarios, disturbances arise in the dynamic balance of oil film inside the intake manifold, resulting in a discrepancy between the amount of fuel injected by the electronic control system and its actual combustion contribution within the cylinder. Consequently, an excessive deviation from the desired AFR occurs with direct implications on vehicle emissions, performance, and fuel efficiency. The HDC strategy proposed in this article establishes a dynamic effect model of the oil film by analyzing its dynamic effects and their influence on the AFR. By leveraging hydrogen's exceptional auxiliary combustion characteristics, it precisely compensates for transient fuel injection into the cylinder. Comparative experimental results demonstrate that the algorithm presented in this study enables rapid control of the AFR to approach ideal values for engine operation, thereby achieving optimal fuel economy across diverse operating conditions.
+
+The research presented in this article primarily focuses on conventional gasoline engines. However, the algorithm proposed herein exhibits potential applicability to future plug-in hybrid vehicle engines and diesel engines.
+
+
+
+![Figure 6: Engine working condition 3. (a) Throttle opening vs Time(s). (b) Engine speed vs Time(s). (c) Experimental results of working condition 2 showing AFR vs Time(s) for PID, HDC, GA-PID, and FTC controllers.](10c82dcc5f2c237961329dd29d65859c_img.jpg)
+
+Figure 6 consists of three subplots. Subplot (a) shows Throttle opening (%) vs Time(s), with a step change from 10% to 30% at 4 seconds. Subplot (b) shows Engine speed (rad/s) vs Time(s), which remains constant at 300 rad/s. Subplot (c) shows AFR vs Time(s) for four controllers: PID (green), HDC (red), GA-PID (magenta), and FTC (blue). The FTC controller shows the highest AFR, reaching approximately 1.5 at 5 seconds, while the others are around 1.0. A zoomed-in inset in (c) shows the AFR values between 3.5 and 4.5 seconds: FTC is 1.05, GA-PID is 0.99, HDC is 0.93, and PID is 0.85.
+
+Figure 6: Engine working condition 3. (a) Throttle opening vs Time(s). (b) Engine speed vs Time(s). (c) Experimental results of working condition 2 showing AFR vs Time(s) for PID, HDC, GA-PID, and FTC controllers.
+
+Fig. 6. Engine working condition 3. (a) Throttle opening. (b) Engine speed. (c) Experimental results of working condition 2.
+
+**Table 3**  
+Comparison of experimental results for transient AFR simulation.
+
+|   | FTC  |           | PID  |           | GA-PID |           | LADRC |           |
+|---|------|-----------|------|-----------|--------|-----------|-------|-----------|
+|   | max  | Error avg | Max  | Error avg | Max    | Error avg | max   | Error avg |
+| 1 | 1.00 | -0.72     | 1.01 | -0.63     | 1.11   | -0.70     | 1.00  | -0.63     |
+| 2 | 1.46 | -0.21     | 1.01 | -0.10     | 1.10   | -0.24     | 1.00  | 0.06      |
+| 3 | 1.46 | -0.1      | 1.22 | -0.04     | 1.23   | -0.15     | 1.00  | -0.02     |
+
+![Figure 7: Bar chart showing the fuel consumption economy (CNY) for FTC, GA-PID, HDC, and PID controllers.](b712e7522f1bb7135730c7d1abb46d43_img.jpg)
+
+Figure 7 is a bar chart showing the fuel consumption economy (CNY) for four controllers. The y-axis ranges from 0 to 1.6. The FTC controller has the highest fuel consumption economy at approximately 1.52 CNY. The GA-PID controller follows at approximately 0.75 CNY. The HDC and PID controllers have the lowest fuel consumption economies, both around 0.65 CNY.
+
+| Controller | Fuel Consumption Economy (CNY) |
+|------------|--------------------------------|
+| FTC        | 1.52                           |
+| GA-PID     | 0.75                           |
+| HDC        | 0.65                           |
+| PID        | 0.65                           |
+
+Figure 7: Bar chart showing the fuel consumption economy (CNY) for FTC, GA-PID, HDC, and PID controllers.
+
+Fig. 7. The fuel consumption economy of working condition 1.
+
+![Bar chart showing the fuel consumption economy (CNY) for four working conditions: FTC, GA-PID, HDC, and PID. The y-axis ranges from 0 to 3.0. FTC has the highest value at approximately 2.5, followed by PID at 1.7, GA-PID at 1.5, and HDC at 1.25.](f176174c2978785e86a8352bd45e322e_img.jpg)
+
+| Working Condition | Fuel Consumption Economy (CNY) |
+|-------------------|--------------------------------|
+| FTC               | 2.5                            |
+| GA-PID            | 1.5                            |
+| HDC               | 1.25                           |
+| PID               | 1.7                            |
+
+Bar chart showing the fuel consumption economy (CNY) for four working conditions: FTC, GA-PID, HDC, and PID. The y-axis ranges from 0 to 3.0. FTC has the highest value at approximately 2.5, followed by PID at 1.7, GA-PID at 1.5, and HDC at 1.25.
+
+Fig. 8. The fuel consumption economy of working condition 2.
+
+![Bar chart showing the fuel consumption economy (CNY) for four working conditions: FTC, GA-PID, HDC, and PID. The y-axis ranges from 0 to 2.5. FTC has the highest value at approximately 2.35, followed by PID at 1.2, GA-PID at 0.8, and HDC at 0.65.](252ea48d02dce93965b91746fb376f35_img.jpg)
+
+| Working Condition | Fuel Consumption Economy (CNY) |
+|-------------------|--------------------------------|
+| FTC               | 2.35                           |
+| GA-PID            | 0.8                            |
+| HDC               | 0.65                           |
+| PID               | 1.2                            |
+
+Bar chart showing the fuel consumption economy (CNY) for four working conditions: FTC, GA-PID, HDC, and PID. The y-axis ranges from 0 to 2.5. FTC has the highest value at approximately 2.35, followed by PID at 1.2, GA-PID at 0.8, and HDC at 0.65.
+
+Fig. 9. The fuel consumption economy of working condition 3.
+
+# CRediT authorship contribution statement
+
+**Zuolei Hu:** Writing – original draft, Formal analysis, Conceptualization. **Yingjie Zhang:** Supervision, Funding acquisition. **Zhaoyang Ai:** Writing – review & editing. **Ming Li:** Investigation. **Ying Zhang:** Writing – review & editing.
+
+# Declaration of competing interest
+
+The authors declare the following financial interests/personal relationships which may be considered as potential competing interests: Yingjie Zhang reports financial support was provided by National Natural Science Foundation of China. If there are other authors, they declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+# Acknowledgments
+
+This research was jointly funded by National Natural Science Foundation of China, grant number “51674113”.
+
+# REFERENCES
+
+- [1] J. Huete, D. Nalianda, B. Zaghari, P. Pilidis, A Strategy to Decarbonize Civil Aviation: a phased innovation approach to hydrogen technologies, *IEEE Electric. Mag.* 10 (2) (2022) 27–33.
+- [2] T. Sandalci, Y. Karagöz, Experimental investigation of the combustion characteristics, emissions and performance of hydrogen port fuel injection in a diesel engine, *Int. J. Hydrogen Energy* 39 (32) (2014) 18480–18489.
+- [3] C. White, R. Steeper, A. Lutz, The hydrogen-fueled internal combustion engine: a technical review, *Int. J. Hydrogen Energy* 31 (10) (2006) 1292–1305.
+
+- [4] S. Jin, J. Deng, K. Xie, X. Liang, C. Wang, W. Ding, L. Li, Knock control in hydrogen-fueled argon power cycle engine with higher compression ratio by water port injection, *Appl. Energy* 349 (2023) 121664.
+- [5] S. Wang, C. Ji, B. Zhang, X. Zhou, Analysis on combustion of a hydrogen-blended gasoline engine at high loads and lean conditions, *Energy Proc.* 61 (1) (2014) 323–326.
+- [6] B. Ebrahimi, R. Tafreshi, J. Mohammadpour, M. Franchek, K. Grigoriadis, H. Masudi, Second-order sliding mode strategy for air-fuel ratio control of lean-burn SI engines, *IEEE Trans. Control Syst. Technol.* 22 (4) (2014) 1374–1384.
+- [7] X. Chen, Y. Wang, I. Haskara, G. Zhu, Optimal air-to-fuel ratio tracking control with adaptive Biofuel content estimation for LNT regeneration, *IEEE Trans. Control Syst. Technol.* 22 (2) (2014) 428–439.
+- [8] Q. Peng, D. Huo, C. Hall, A comparison of neural network-based strategies for diesel engine air handling control, in: 2022 American Control Conference (ACC), Atlanta, GA, USA, 2022, pp. 3031–3037.
+- [9] Y. Shi, D. Yu, Y. Tian, Y. Shi, Air-fuel ratio prediction and NMPC for SI engines with modified Volterra model and RBF network, *Eng. Appl. Artif. Intell.* 45 (1) (2015) 313–324.
+- [10] H. Wu, R. Tafreshi, Air-fuel ratio control of lean-burn SI engines using the LPV-based fuzzy technique, *IET Control Theory & Appl.* 12 (12) (2018) 1414–1420.
+- [11] T. Laurain, Z. Lendek, J. Lauber, R. Palhares, A new air-fuel ratio model fixing the transport delay: validation and control, in: 2017 IEEE Conference on Control Technology and Applications (CCTA), Maui, HI, USA, 2017, pp. 1904–1909.
+- [12] A. Triwiyatno, B. Setiyono, J. Panjaitan, A. Kurniahadi, I. Setiawan, Design of air-fuel ratio control using gain-scheduled fuzzy-PID for small scooter engine, Semarang, Indonesia, in: 2020 7th International Conference on Information Technology, Computer, and Electrical Engineering (ICITACEE), 2020, pp. 47–51.
+- [13] J. Panjaitan, A. Kurniahadi, A. Triwiyatno, I. Setiawan, Design of gain-scheduled fuzzy PID controller for AFR control system of SI-based motorcycle engine model, Semarang, Indonesia, in: 2020 7th International Conference on Information Technology, Computer, and Electrical Engineering (ICITACEE), 2020, pp. 19–24.
+- [14] B. Zhao, K. Song, H. Xie, Air-fuel ratio control for gasoline engines based on physical model assisted extended state predictive observer, Hefei, China, in: 2022 41st Chinese Control Conference (CCC), 2022, pp. 5505–5510.
+- [15] G. Kushwaha, S. Saraswati, Air path identification of turbocharged diesel engine using rnn, in: 2015 International Conference on Industrial Instrumentation and Control (ICIC), 2015, pp. 1328–1332.
+- [16] P. Wang, C. Zhu, J. Gao, Feedforward model predictive control of fuel-air ratio for lean-burn spark-ignition gasoline engines of passenger cars, *IEEE Access* 7 (2019) 73961–73969.
+- [17] Z. Salehi, S. Azadi, A. Mousavinia, Sliding mode air-to-fuel ratio control of spark ignition engines in comprehensive powertrain system, Tabriz, Iran, in: 2021 7th International Conference on Control, Instrumentation and Automation (ICCIA), 2021, pp. 1–5.
+- [18] M. Shahbaz, A. Amin, Design of active fault tolerant control system for air fuel ratio control of internal combustion engines using artificial neural networks, *IEEE Access* 9 (2021) 46022–46032.
+- [19] H. Xiao, Performance analysis of gas turbine using hydrogen-added natural gas, Guangzhou, China, in: 2022 12th International Conference on Power and Energy Systems (ICPES), 2022, pp. 653–656.
+- [20] M. Nabi, W. Hussam, M. Islam, S. Muyeen, Assessment of the influence of hydrogen share on performance, combustion, and emissions in a four-stroke gasoline engine, *IEEE Access* 10 (2022) 56348–56361.
+- [21] C. Tealdo, J. Deutsch, Emissions of a direct injection diesel engine by adding hydrogen to the inlet manifold, in: 2020 IEEE International Conference on Engineering Veracruz (ICEV), Boca del Rio, Mexico, 2020, pp. 1–5.
+- [22] Y. Wei, Y. Zhang, X. Zhu, H. Gu, Effects of diesel hydrocarbon components on cetane number and engine combustion and emission characteristics, *Appl. Sci.* 12 (7) (2022) 523–530.
+- [23] H. Koten, Hydrogen effects on the diesel engine performance and emissions, *Int. J. Hydrogen Energy* 43 (22) (2018) 10511–10519.
+- [24] S. Sagar, Knocking behavior and emission characteristics of a port fuel injected hydrogen enriched compressed natural gas fueled spark ignition engine, *Appl. Therm. Eng.* 141 (1) (2018) 42–50.
+- [25] S. Meziane, A. Bentebechie, Numerical study of blended fuel natural gas-hydrogen combustion in rich/quench/lean combustor of a micro gas turbine, *Int. J. Hydrogen Energy* 44 (29) (2019) 15610–15621.
+- [26] H. Koten, Hydrogen effects on the diesel engine performance and emissions, *Int. J. Hydrogen Energy* 43 (22) (2018) 10511–10519.
+- [27] R. Banerjee, M. Mikulski, A. Chakraborty, ANN meta-model assisted MOPSO application in an EPA-Tier 4 constrained emission-performance trade-off calibration problem of a hydrogen-diesel-EGR dual fuel operation, *Fuel* 208 (15) (2017) 746–778.
+- [28] M. Deb, R. Banerjee, Multi objective optimization of performance parameters of a single cylinder diesel engine with hydrogen as a dual fuel using pareto-based genetic algorithm, *Int. J. Hydrogen Energy* 39 (15) (2013) 8063–8077.
+
+![Portrait photo of Zuolei Hu, a man in a suit and tie.](0cc86fe8fc37b0edc9581f2af9459a52_img.jpg)
+
+Portrait photo of Zuolei Hu, a man in a suit and tie.
+
+**Zuolei Hu** received the B.S. degree in electronic and information engineering from the Nanyang Institute of Technology, China, in 2014, and the M.E. degree in engineering from Hunan University, Hunan, in 2017. He is currently working toward the Ph.D. degree in computer science and technology at Hunan University. His current research interests include intelligent control, energy saving control for hybrid vehicles, deep reinforcement learning.
+
+![Portrait of Yingjie Zhang](7832324609ad3cc688064e0341612b32_img.jpg)
+
+A black and white portrait of a man with short dark hair, wearing a suit jacket and a tie.
+
+Portrait of Yingjie Zhang
+
+**Yingjie Zhang** received the Ph.D. degree in control theory and control engineering from the Hunan university, Changsha, Hunan, China, in 2005. During 2010 to 2011, he was an Universitetetet Oslo Visiting Scholar at Norway. He is currently the Director of the Institute of Industry Energy-Saving Control & Evaluation, Hunan University, Changsha, China. He is currently also a Professor with the College of Computer Science and Electric Engineering, Hunan University. He has authored or coauthored more than 50 papers in referred journals and conferences. His research interests include intelligent control, computational intelligence, and energy-optimized control.
+
+![Portrait of Zhaoyang Ai](df6babe297323feb1575ba89f5cf3b09_img.jpg)
+
+A black and white portrait of a man with short dark hair, wearing a light-colored, patterned button-down shirt.
+
+Portrait of Zhaoyang Ai
+
+**Zhaoyang Ai (Member, IEEE)** received the Ph.D. degree in linguistics from Hunan University, Changsha, China. He is currently an Associate Professor with the Interdisciplinary Research Center for Language Intelligence and Cultural Heritages, Hunan University and College of Foreign Languages, Hunan University. He was a Visiting Scholar with Yale University, New Haven, CT, USA. He has authored or coauthored more than 30 research papers in international journals in addition to four academic books. His research is focused on language intelligence, system control, cognitive control and biophysics linguistics. His research interests include superconductive translation, emergence, linguistics, cognitive superconductivity, informatics, smart control, and efficiency studies. Dr. Ai is a member of ACM, the IEEE Council of Superconductivity, IEEE Communications Society, and IEEE Information Theory Society.
+
+![Portrait of Ming Li](3293245c6893d9d49c2c878828423ecd_img.jpg)
+
+A black and white portrait of a woman with long dark hair, wearing a dark top.
+
+Portrait of Ming Li
+
+**Ming Li** received the B.S. degree in electrical engineering and automation from China Three Gorges University, Yichang, China, in 2013, and the M.E. degree in power engineering from the Hunan Institute of Engineering, Xiangtan, China, in 2016. She is currently pursuing the Ph.D. degree in computer science and technology with the College of Computer Science and Electronic Engineering, Institute of Industry Energy-Saving Control and Evaluation, Hunan University, Changsha, China. Her current research interests include intelligent control, parameter/state estimation, and energy optimization for hybrid electric vehicles (HEV).
+
+![Portrait of Ying Zhang](bf9297824aec2a021ecbad6f70536914_img.jpg)
+
+A black and white portrait of a man with short dark hair, wearing a suit jacket and a tie.
+
+Portrait of Ying Zhang
+
+**Ying Zhang (Member, IEEE)** received the Ph.D. Degree in computer science and technology from the College of Computer Science and Electronic Engineering, Hunan University, Changsha, China, in 2020. He is currently an Associate Professor with the School of Computer Science, Northwestern Polytechnical University, Xi'an, China. He was a Visiting Scholar with the Department of Electrical and Computer Engineering, Technische Universität Dresden, Dresden, Germany, from February 2018 to March 2018, and the University of Michigan, Dearborn, MI, USA, from October 2018 to October 2019. He has authored or coauthored more than 15 papers in IEEE journals and conferences. His research interests include parameter/state estimation, energy optimization and control, autonomous driving of ground vehicles/intelligent transportation, modeling, situation awareness, decision making, and intelligent control of unmanned aerial vehicles and other autonomous systems.
+
